@@ -1,0 +1,22 @@
+{
+  "name": "inversify-vue",
+  "version": "0.0.2",
+  "description": "Wrapper to use inversify as property decorator with TypeScript, useful for component liraries like Vue or React",
+  "main": "src/index.ts",
+  "author": "Quique Fdez Guerra",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CKGrafico/inversify-vue.git"
+  },
+  "keywords": [
+    "inversify",
+    "vue",
+    "vue di",
+    "vue inject"
+  ],
+  "dependencies": {
+    "inversify": "^5.0.1",
+    "typescript": "^3.3.3333"
+  }
+}
