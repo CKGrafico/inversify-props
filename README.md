@@ -31,7 +31,7 @@ _You probably don't need this if:_
 - You want to use all the power of inversify, we are only injecting dependencies like services, helpers, utils...
 - You don't want to inject your dependencies as properties.
 
-## How register a dependency?
+## How register a dependency
 Inversify needs an id to register our dependencies, this wrapper is going to do this for you 'magically' but if you want to uglify the code, keep reading the docs 🤓.
 
 First of all create a class and an interface with the public methods of your class.
@@ -56,7 +56,21 @@ Now is time to register the service in the container, we usually do that in `app
  container.addSingleton<IService1>(Service1);
 ```
 
-## How many types are to register a class?
+## Other ways to register a class
+As [inversify accepts](https://github.com/inversify/InversifyJS/blob/master/wiki/scope.md), we have configured three types of registration.
+- Singleton: The dependency will be created only once, one dependency - one object.
+- Transient: The dependency will be created each time is injected, one dependency - one object per injection.
+- Request: Special case of singleton, more info in [official docs](https://github.com/inversify/InversifyJS/blob/master/wiki/scope.md#about-inrequestscope).
+
+## How to use in your components
+Once your dependencies are registered in the container, is simple as create a property with the name and the interface.
+```
+export default class extends Component {
+  @Inject() service1: IService1;
+}
+```
+
+> Note: Part of the magic is that the name of the property has to be the name of the interface in camelCase without the 'I', this is how we don't need to add the `id`.
 
 ## How to configure uglify?
 If you want to use uglify to ofuscate the code, you will need to add this options to preserve the names of the clases (we need them to generate the ids `magically` 😉).
