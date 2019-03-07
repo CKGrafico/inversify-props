@@ -26,7 +26,7 @@ export default class extends Component {
 ## Why we made this package
 The idea is to add a simple wrapper that helps us to inject dependencies in components using `property decorators`, we have also extend a little `inversify` adding some methods that make our experience injecting dependencies easier.
 
-_You probably don't need this if:_
+*You probably don't need this if:*
 - You have experience using inversify and you don't need to simplify the process.
 - You want to use all the power of inversify, we are only injecting dependencies like services, helpers, utils...
 - You don't want to inject your dependencies as properties.
