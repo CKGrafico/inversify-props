@@ -70,7 +70,7 @@ export default class extends Component {
 }
 ```
 
-> Note: Part of the magic is that the name of the property has to be the name of the interface in camelCase without the 'I', this is how we don't need to add the `id`.
+> Note: Part of the magic is that the name of the property has to be the name of the interface, this is how we don't need to add the `id`.
 
 ## How to configure uglify
 If you want to use uglify to ofuscate the code, you will need to add this options to preserve the names of the clases (we need them to generate the ids `magically` 😉).
