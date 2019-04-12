@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "author": "Quique Fdez Guerra",
   "scripts": {
-    "build": "tsc -p src --outDir dist"
+    "build": "tsc -p src --outDir dist",
+    "test": "jest"
   },
   "license": "MIT",
   "repository": {
@@ -21,11 +22,18 @@
     "react di",
     "vue di",
     "vue inject",
-    "react inject"
+    "react inject",
+    "litelement",
+    "polymer"
   ],
   "dependencies": {
     "inversify": "^5.0.1",
     "reflect-metadata": "^0.1.13",
     "typescript": "^3.3.3333"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.11",
+    "jest": "^24.7.1",
+    "ts-jest": "^24.0.2"
   }
 }

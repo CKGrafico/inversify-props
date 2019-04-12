@@ -25,6 +25,17 @@ export default class extends Component {
 }
 ```
 
+## Alternative usage (without magic)
+```
+container.addSingleton<IService1>(Service1, 'Service1');
+container.addSingleton<IService2>(Service2, 'Service2');
+
+export default class extends Component {
+  @Inject('Service1') service1: IService1;
+  @Inject('Service2') service2: IService2;
+}
+```
+
 ## Why we made this package
 The idea is to add a simple wrapper that helps us to inject dependencies in components using `property decorators`, we have also extend a little `inversify` adding some methods that make our experience injecting dependencies easier.
 

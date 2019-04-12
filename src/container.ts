@@ -4,29 +4,29 @@ import { injectId } from './helpers';
 export class Container extends InversifyContainer {
   public bindTo<T>(constructor: {
     new (...args: any[]): T;
-  }): interfaces.BindingInWhenOnSyntax<T> {
+  }, id?: string): interfaces.BindingInWhenOnSyntax<T> {
 
-    return super.bind<T>(injectId(constructor)).to(constructor);
+    return super.bind<T>(id || injectId(constructor)).to(constructor);
   }
 
   public addTransient<T>(constructor: {
     new (...args: any[]): T;
-  }): interfaces.BindingWhenOnSyntax<T> {
+  }, id?: string): interfaces.BindingWhenOnSyntax<T> {
 
-    return super.bind<T>(injectId(constructor)).to(constructor).inTransientScope();
+    return super.bind<T>(id || injectId(constructor)).to(constructor).inTransientScope();
   }
 
   public addSingleton<T>(constructor: {
     new (...args: any[]): T;
-  }): interfaces.BindingWhenOnSyntax<T> {
+  }, id?: string): interfaces.BindingWhenOnSyntax<T> {
 
-    return super.bind<T>(injectId(constructor)).to(constructor).inSingletonScope();
+    return super.bind<T>(id || injectId(constructor)).to(constructor).inSingletonScope();
   }
 
   public addRequest<T>(constructor: {
     new (...args: any[]): T;
-  }): interfaces.BindingWhenOnSyntax<T> {
+  }, id?: string): interfaces.BindingWhenOnSyntax<T> {
 
-    return super.bind<T>(injectId(constructor)).to(constructor).inRequestScope();
+    return super.bind<T>(id || injectId(constructor)).to(constructor).inRequestScope();
   }
 }
