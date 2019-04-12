@@ -1,5 +1,5 @@
 import { IService3 } from './iservice3.service';
-import { injectable } from '../../../../../src';
+import { injectable } from '../../../../../../src';
 
 @injectable()
 export class Service3 implements IService3 {

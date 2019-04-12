@@ -1,5 +1,5 @@
 import { IService2 } from './iservice2.service';
-import { Inject, injectable } from '../../../../../src';
+import { Inject, injectable } from '../../../../../../src';
 import { IService3 } from '../service3';
 
 @injectable()

@@ -7,7 +7,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { IService1, IService2 } from '~/shared';
-import { Inject } from '../../../src';
+import { Inject } from '../../../../src';
 
 @Component
 export default class extends Vue {
