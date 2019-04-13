@@ -1,5 +1,4 @@
 import { Vue } from 'vue-property-decorator';
-import 'reflect-metadata';
 
 import { router } from './app.router';
 import { containerBuilder } from './app.container';

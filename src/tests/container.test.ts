@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { injectable } from '..';
-import { Container } from '../container';
+import { Container } from '../lib/container';
 
 interface IExampleService {
   get(): boolean;

@@ -23,8 +23,6 @@
   "dependencies": {
     "@babel/polyfill": "^7.4.3",
     "bootstrap": "^4.3.1",
-    "inversify-props": "^1.0.2",
-    "jquery": "3.3.1",
     "lit-element": "^2.1.0",
     "normalize-scss": "7.0.1"
   },

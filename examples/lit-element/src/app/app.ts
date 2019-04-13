@@ -1,7 +1,5 @@
-import './vendor';
-import $ from 'jquery';
-
+import { container } from '../../../../src';
+import { IExampleService, ExampleService } from './services';
 import './components/example-element';
 
-const a = 1;
-console.log($);
+container.addSingleton<IExampleService>(ExampleService);

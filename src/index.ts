@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 
 import { injectable } from 'inversify';
-import { Container } from './container';
-import { Inject } from './helpers';
+import { Container } from './lib/container';
+import { Inject } from './lib/helpers';
 
 // How to inject a dependency
 // @Inject() nameService: INameService;
@@ -11,5 +11,6 @@ export const container: Container = new Container();
 
 export {
   Inject,
-  injectable
+  injectable,
+  Container
 };

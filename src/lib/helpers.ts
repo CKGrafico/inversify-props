@@ -1,4 +1,4 @@
-import { container } from '.';
+import { container } from '..';
 
 /**
  * @param key the name of the property,

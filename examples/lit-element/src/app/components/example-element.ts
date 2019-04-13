@@ -1,13 +1,14 @@
 import { LitElement, html, property, customElement } from 'lit-element';
-import { ExampleService } from '~/services/example-service';
+import { Inject } from '../../../../../src';
+import { IExampleService } from '~/services/iexample-service';
 
-const exampleService = new ExampleService();
 @customElement('example-element')
 export class SimpleGreeting extends LitElement {
+  @Inject() exampleService: IExampleService;
   @property() name = 'World |';
 
   private onClick() {
-    this.name = exampleService.transform(this.name);
+    this.name = this.exampleService.transform(this.name);
   }
 
   render() {
