@@ -3,7 +3,7 @@ import { Inject } from '../../../../../src';
 import { IExampleService } from '~/services/iexample-service';
 
 @customElement('example-element')
-export class SimpleGreeting extends LitElement {
+export class ExampleElement extends LitElement {
   @Inject() exampleService: IExampleService;
   @property() name = 'World |';
 
