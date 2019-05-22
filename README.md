@@ -9,6 +9,8 @@ Do you use Hooks? You can try the experimental package [inversify-hooks](https:/
 ![GitHub contributors](https://img.shields.io/github/contributors/CKGrafico/inversify-props.svg)
 [![GitHub issues](https://img.shields.io/github/issues/CKGrafico/inversify-props.svg)](https://github.com/CKGrafico/inversify-props/issues)
 
+![logo](https://i.imgur.com/syVbzU6.gif)
+
 ## Installation
 ```
 npm install --save inversify-props
