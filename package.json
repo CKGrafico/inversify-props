@@ -1,6 +1,6 @@
 {
   "name": "inversify-props",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "description": "Wrapper to use inversify as property decorator with TypeScript, useful for component liraries like Vue or React",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
