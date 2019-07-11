@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Vue } from 'vue-property-decorator';
 
 import { router } from './app.router';

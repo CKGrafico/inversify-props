@@ -1,5 +1,3 @@
-import 'reflect-metadata';
-
 import { injectable } from 'inversify';
 import { Container } from './lib/container';
 import { Inject } from './lib/helpers';
