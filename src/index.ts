@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { Container } from './lib/container';
+import { Container, DependencyId } from './lib/container';
 import { Inject } from './lib/helpers';
 
 // How to inject a dependency
@@ -7,8 +7,11 @@ import { Inject } from './lib/helpers';
 
 export const container: Container = new Container();
 
+const cid = DependencyId;
+
 export {
   Inject,
   injectable,
-  Container
+  Container,
+  cid
 };

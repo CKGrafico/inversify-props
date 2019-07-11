@@ -1,4 +1,4 @@
-import { container } from '..';
+import { container, cid } from '..';
 
 /**
  * @param key the name of the property,
@@ -17,12 +17,12 @@ const keyToId = (key: string) => {
  * Decorator to inject dependencies in components or classes
  * @param id optional id, could be auto generated with prop name
  */
-export function Inject(id?: string | symbol) {
+export function Inject(id?: string) {
     return (target: any, key: string) => {
         const generatedId = id || keyToId(key);
 
         const getter = () => {
-            return container.get(generatedId);
+            return container.get(cid[generatedId]);
         };
 
         Reflect.deleteProperty[key];

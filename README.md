@@ -29,12 +29,19 @@ export default class extends Component {
 
 ## Alternative usage (without magic)
 ```
-container.addSingleton<IService1>(Service1, 'Service1');
-container.addSingleton<IService2>(Service2, 'Service2');
+container.addSingleton<IService1>(Service1);
 
 export default class extends Component {
-  @Inject('Service1') service1: IService1;
-  @Inject('Service2') service2: IService2;
+  @Inject(cid.IService1) service1: IService1;
+}
+```
+
+## You can also use any ID that you prefer
+```
+container.addSingleton<IService1>(Service1, 'MyService1');
+
+export default class extends Component {
+  @Inject('MyService1') service1: IService1;
 }
 ```
 
@@ -92,12 +99,21 @@ export default class extends Component {
 - [Basic example with LitElement](https://github.com/CKGrafico/inversify-props/tree/master/examples/lit-element)
 - [Used in my Boilerplates](https://boilerplates.js.org)
 
-## How to configure uglify
-If you want to use uglify to ofuscate the code, you will need to add this options to preserve the names of the clases (we need them to generate the ids `magically` 😉).
+## How to configure Uglify or Terser
+If you want to use Uglify or Terser to obfuscate the code, you will need to add this options to preserve the names of the classes (we need them to generate the ids `magically` 😉).
 
 ```
 new UglifyJSPlugin({
   uglifyOptions: {
+    keep_classnames: true,
+    keep_fnames: true,
+  }
+});
+```
+
+```
+new TerserPlugin({
+  terserOptions: {
     keep_classnames: true,
     keep_fnames: true,
   }
