@@ -13,7 +13,7 @@ Do you use Hooks? You can try the experimental package [inversify-hooks](https:/
 
 ## Installation
 ```
-npm install --save inversify-props
+npm install --save inversify-props reflect-metadata@0.1.12
 ```
 
 ## Usage
