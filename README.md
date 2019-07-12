@@ -13,7 +13,26 @@ Do you use Hooks? You can try the experimental package [inversify-hooks](https:/
 
 ## Installation
 ```
-npm install --save inversify-props reflect-metadata@0.1.12
+$ npm install inversify-props reflect-metadata --save
+```
+
+The inversify-props type definitions are included in the inversify-props npm package.
+
+> :warning: **Important!** inversify-props requires TypeScript >= 2.0 and the `experimentalDecorators`, `emitDecoratorMetadata`, `types` and `lib`
+compilation options in your `tsconfig.json` file.
+
+```js
+{
+    "compilerOptions": {
+        "target": "es5",
+        "lib": ["es6"],
+        "types": ["reflect-metadata"],
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+    }
+}
 ```
 
 ## Usage

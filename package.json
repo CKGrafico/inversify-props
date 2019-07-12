@@ -1,6 +1,6 @@
 {
   "name": "inversify-props",
-  "version": "1.3.0",
+  "version": "1.3.2",
   "description": "Wrapper to use inversify as property decorator with TypeScript, useful for component libraries like Vue, React or LitElement",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -26,12 +26,8 @@
     "litelement",
     "polymer"
   ],
-  "peerDependencies": {
-    "reflect-metadata": "0.1.12"
-  },
   "dependencies": {
     "inversify": "^5.0.1",
-    "reflect-metadata": "^0.1.12",
     "typescript": "^3.5.3"
   },
   "devDependencies": {
