@@ -18,6 +18,9 @@ npm install --save inversify-props reflect-metadata@0.1.12
 
 ## Usage
 ```
+import 'reflect-metadata'; // Import only once
+import { container } from 'inversify-props';
+
 container.addSingleton<IService1>(Service1);
 container.addSingleton<IService2>(Service2);
 
