@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
-import { Container, DependencyId } from './lib/container';
-import { Inject } from './lib/helpers';
+import { Container } from './lib/container';
+import { Inject, inject, DependencyId } from './lib/helpers';
 
 // How to inject a dependency
 // @Inject() nameService: INameService;
@@ -11,6 +11,7 @@ const cid = DependencyId;
 
 export {
   Inject,
+  inject,
   injectable,
   Container,
   cid

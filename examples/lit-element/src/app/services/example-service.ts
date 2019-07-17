@@ -1,5 +1,5 @@
 import { IExampleService } from './iexample-service';
-import { injectable } from 'inversify';
+import { injectable } from '../../../../../src';
 
 @injectable()
 export class ExampleService implements IExampleService {

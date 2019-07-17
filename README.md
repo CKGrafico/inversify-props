@@ -18,6 +18,64 @@ $ npm install inversify-props reflect-metadata --save
 
 The inversify-props type definitions are included in the inversify-props npm package.
 
+## How to use
+```
+import 'reflect-metadata'; // Import only once
+import { container, Inject } from 'inversify-props';
+
+container.addSingleton<IService1>(Service1);
+container.addSingleton<IService2>(Service2);
+
+export default class extends Component {
+  @Inject() service1: IService1;
+  @Inject() service2: IService2;
+}
+```
+
+## Alternative usage (without magic)
+```
+import 'reflect-metadata'; // Import only once
+import { container, Inject } from 'inversify-props';
+
+container.addSingleton<IService1>(Service1);
+
+export default class extends Component {
+  @Inject(cid.IService1) service1: IService1;
+}
+```
+
+## How to use this library outside of a component
+```
+container.addSingleton<IService1>(Service1, 'MyService1');
+
+// You can inject in other services as a Prop
+export class MyOtherService {
+  @Inject() private service1: IService1;
+}
+
+// Also in the constructor as a param
+export class MyOtherService {
+  constructor(@inject() private exampleService: IExampleService) {}
+}
+
+// Or in any function as a variable
+export function myHelper() {
+  const service1 = container.get<IService1>(cid.IService1);
+}
+```
+
+## You can also use any ID that you prefer
+```
+import 'reflect-metadata'; // Import only once
+import { container, Inject } from 'inversify-props';
+
+container.addSingleton<IService1>(Service1, 'MyService1');
+
+export default class extends Component {
+  @Inject('MyService1') service1: IService1;
+}
+```
+
 > :warning: **Important!** inversify-props requires TypeScript >= 2.0 and the `experimentalDecorators`, `emitDecoratorMetadata`, `types` and `lib`
 compilation options in your `tsconfig.json` file.
 
@@ -32,38 +90,6 @@ compilation options in your `tsconfig.json` file.
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true
     }
-}
-```
-
-## Usage
-```
-import 'reflect-metadata'; // Import only once
-import { container } from 'inversify-props';
-
-container.addSingleton<IService1>(Service1);
-container.addSingleton<IService2>(Service2);
-
-export default class extends Component {
-  @Inject() service1: IService1;
-  @Inject() service2: IService2;
-}
-```
-
-## Alternative usage (without magic)
-```
-container.addSingleton<IService1>(Service1);
-
-export default class extends Component {
-  @Inject(cid.IService1) service1: IService1;
-}
-```
-
-## You can also use any ID that you prefer
-```
-container.addSingleton<IService1>(Service1, 'MyService1');
-
-export default class extends Component {
-  @Inject('MyService1') service1: IService1;
 }
 ```
 

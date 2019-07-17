@@ -1,18 +1,5 @@
 import { Container as InversifyContainer, interfaces } from 'inversify';
-import { injectId } from './helpers';
-
-export let DependencyId: { [key: string]: string | symbol; } = {};
-
-function cacheId(customId: string, id: string): string | symbol {
-  if (customId) {
-    DependencyId[customId] = customId;
-    return customId;
-  }
-
-  const dependencyId = Symbol(id);
-  DependencyId[id] = dependencyId;
-  return dependencyId;
-}
+import { injectId, cacheId } from './helpers';
 
 export class Container extends InversifyContainer {
   public bindTo<T>(constructor: {
@@ -45,5 +32,9 @@ export class Container extends InversifyContainer {
 
     const dependencyId = cacheId(id, injectId(constructor));
     return super.bind<T>(dependencyId).to(constructor).inRequestScope();
+  }
+
+  public get<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): T {
+    return super.get<T>(serviceIdentifier);
   }
 }
