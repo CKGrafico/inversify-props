@@ -32,12 +32,12 @@ export function cacheId(customId: string, id: string): string | symbol {
  * Decorator to inject dependencies in components or classes
  * @param id optional id, could be auto generated with prop name
  */
-export function Inject(id?: string) {
+export function Inject(id?: string | symbol) {
   return (target: any, key: string) => {
-    const generatedId = id || keyToId(key);
-
     const getter = () => {
-      return container.get(cid[generatedId]);
+      const generatedId = id || keyToId(key);
+      let realCid = typeof generatedId === 'symbol' ? generatedId : cid[generatedId];
+      return container.get(realCid);
     };
 
     Reflect.deleteProperty[key];
