@@ -2,7 +2,7 @@ import { container, cid } from '..';
 import * as METADATA_KEY from 'inversify/lib/constants/metadata_keys';
 import { Metadata } from 'inversify/lib/planning/metadata';
 import { tagParameter } from 'inversify/lib/annotation/decorator_utils';
-
+import { injectable as __injectable, inject as  __inject } from 'inversify';
 /**
  * @param key the name of the property,
  * If the interface is IMyService the key must be myService or _myService
@@ -34,16 +34,23 @@ export function cacheId(customId: string, id: string): string | symbol {
  */
 export function Inject(id?: string | symbol) {
   return (target: any, key: string) => {
-    const getter = () => {
-      const generatedId = id || keyToId(key);
-      let realCid = typeof generatedId === 'symbol' ? generatedId : cid[generatedId];
-      return container.get(realCid);
-    };
+    // Create id
+    const generatedId = id || keyToId(key);
+    let realCid = typeof generatedId === 'symbol' ? generatedId : cid[generatedId];
 
-    Reflect.deleteProperty[key];
+    // For Components
+    Reflect.deleteProperty(target, key);
     Reflect.defineProperty(target, key, {
-      get: getter,
+        get() {
+          return container.get(realCid);
+        },
+        set(value) {
+          return value;
+        }
     });
+
+    // For Services
+    return __inject(realCid)(target, key);
   };
 }
 
@@ -53,7 +60,7 @@ export function Inject(id?: string | symbol) {
  */
 export function inject(id?: string) {
   return function (target: any, targetKey: string, index: number): void {
-    const args = target.toString().match(/constructor.*?\(([^)]*)\)/);
+    const args = target.toString().match(/[constructor|function].*?\(([^)]*)\)/);
 
     if (!args) {
       throw new Error(`Cannot find constructor in this class ${target.name}`);
@@ -96,4 +103,14 @@ export function mockInject(target: any, key: any, mock: any) {
     get: getter,
     set: x => x
   });
+}
+
+/**
+ * Help Injectable to cache id if necessary
+ */
+export function injectable(customId?: string) {
+  return function (target: any) {
+    cacheId(customId, injectId(target));
+    return __injectable()(target);
+  };
 }
