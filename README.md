@@ -21,26 +21,26 @@ The inversify-props type definitions are included in the inversify-props npm pac
 ## How to use
 ```
 import 'reflect-metadata'; // Import only once
-import { container, Inject } from 'inversify-props';
+import { container, inject } from 'inversify-props';
 
 container.addSingleton<IService1>(Service1);
 container.addSingleton<IService2>(Service2);
 
 export default class extends Component {
-  @Inject() service1: IService1;
-  @Inject() service2: IService2;
+  @inject() service1: IService1;
+  @inject() service2: IService2;
 }
 ```
 
 ## Alternative usage (without magic)
 ```
 import 'reflect-metadata'; // Import only once
-import { container, Inject } from 'inversify-props';
+import { container, inject } from 'inversify-props';
 
 container.addSingleton<IService1>(Service1);
 
 export default class extends Component {
-  @Inject(cid.IService1) service1: IService1;
+  @inject(cid.IService1) service1: IService1;
 }
 ```
 
@@ -50,7 +50,7 @@ container.addSingleton<IService1>(Service1, 'MyService1');
 
 // You can inject in other services as a Prop
 export class MyOtherService {
-  @Inject() private service1: IService1;
+  @inject() private service1: IService1;
 }
 
 // Also in the constructor as a param
@@ -67,12 +67,12 @@ export function myHelper() {
 ## You can also use any ID that you prefer
 ```
 import 'reflect-metadata'; // Import only once
-import { container, Inject } from 'inversify-props';
+import { container, inject } from 'inversify-props';
 
 container.addSingleton<IService1>(Service1, 'MyService1');
 
 export default class extends Component {
-  @Inject('MyService1') service1: IService1;
+  @inject('MyService1') service1: IService1;
 }
 ```
 
@@ -136,7 +136,7 @@ As [inversify accepts](https://github.com/inversify/InversifyJS/blob/master/wiki
 Once your dependencies are registered in the container, is simple as create a property with the name and the interface.
 ```
 export default class extends Component {
-  @Inject() service1: IService1;
+  @inject() service1: IService1;
 }
 ```
 

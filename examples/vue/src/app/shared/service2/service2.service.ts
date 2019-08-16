@@ -5,7 +5,7 @@ import { IService4 } from '../service4';
 
 @injectable()
 export class Service2 implements IService2 {
-  @Inject(cid.IService3) service3_name: IService3;
+  @inject(cid.IService3) service3_name: IService3;
 
   constructor(@inject() private service4: IService4) {}
 

@@ -1,8 +1,5 @@
 import { container, cid } from '..';
-import * as METADATA_KEY from 'inversify/lib/constants/metadata_keys';
-import { Metadata } from 'inversify/lib/planning/metadata';
-import { tagParameter } from 'inversify/lib/annotation/decorator_utils';
-import { injectable as __injectable, inject as  __inject } from 'inversify';
+import { injectable as __injectable, inject as __inject } from 'inversify';
 /**
  * @param key the name of the property,
  * If the interface is IMyService the key must be myService or _myService
@@ -33,47 +30,45 @@ export function cacheId(customId: string, id: string): string | symbol {
  * @param id optional id, could be auto generated with prop name
  */
 export function Inject(id?: string | symbol) {
-  return (target: any, key: string) => {
+  return (target: any, targetKey: string, index?: number) => {
+
+    // Is parameter decorator
+    if (typeof index === 'number') {
+      const args = target.toString().match(/[constructor|function].*?\(([^)]*)\)/);
+
+      if (!args) {
+        throw new Error(`Cannot find constructor in this class ${target.name}`);
+      }
+
+      const listOfArgs = args[1].split(',').map(arg => (arg.replace(/\/\*.*\*\//, '').trim())).filter(x => x);
+      const key = listOfArgs[index];
+      const dependencyId = cacheId(id as string, injectId(key));
+
+      return __inject(dependencyId)(target, targetKey, index);
+    }
+
+    // Is property decorator
     // Create id
-    const generatedId = id || keyToId(key);
+    const generatedId = id || keyToId(targetKey);
     let realCid = typeof generatedId === 'symbol' ? generatedId : cid[generatedId];
 
     // For Components
-    Reflect.deleteProperty(target, key);
-    Reflect.defineProperty(target, key, {
-        get() {
-          return container.get(realCid);
-        },
-        set(value) {
-          return value;
-        }
+    Reflect.deleteProperty(target, targetKey);
+    Reflect.defineProperty(target, targetKey, {
+      get() {
+        return container.get(realCid);
+      },
+      set(value) {
+        return value;
+      }
     });
 
     // For Services
-    return __inject(realCid)(target, key);
+    return __inject(realCid)(target, targetKey);
   };
 }
 
-/**
- * Decorator to inject dependencies in constructor using parameters
- * @param id optional id, could be auto generated with prop name
- */
-export function inject(id?: string) {
-  return function (target: any, targetKey: string, index: number): void {
-    const args = target.toString().match(/[constructor|function].*?\(([^)]*)\)/);
-
-    if (!args) {
-      throw new Error(`Cannot find constructor in this class ${target.name}`);
-    }
-
-    const listOfArgs = args[1].split(',').map(arg => (arg.replace(/\/\*.*\*\//, '').trim())).filter(x => x);
-    const key = listOfArgs[index];
-    const dependencyId = cacheId(id, injectId(key));
-
-    const metadata = new Metadata(METADATA_KEY.INJECT_TAG, dependencyId);
-    tagParameter(target, targetKey, index, metadata);
-  };
-}
+export const inject = Inject;
 
 /**
  * Creates an identifier meanwhile we cannot create with interfaces
