@@ -1,5 +1,5 @@
-import { container, cid } from '..';
-import { injectable as __injectable, inject as __inject } from 'inversify';
+import { inject as __inject, injectable as __injectable } from 'inversify';
+import { cid, container } from '..';
 /**
  * @param key the name of the property,
  * If the interface is IMyService the key must be myService or _myService
@@ -50,7 +50,8 @@ export function Inject(id?: string | symbol) {
     // Is property decorator
     // Create id
     const generatedId = id || keyToId(targetKey);
-    let realCid = typeof generatedId === 'symbol' || id ? generatedId : cid[generatedId];
+    cacheId(generatedId as string, injectId(targetKey));
+    const realCid = typeof generatedId === 'symbol' || id ? generatedId : cid[generatedId];
 
     // For Components
     Reflect.deleteProperty(target, targetKey);
