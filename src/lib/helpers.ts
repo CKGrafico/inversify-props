@@ -49,8 +49,7 @@ export function Inject(id?: string | symbol) {
 
     // Is property decorator
     // Create id
-    const generatedId = id || keyToId(targetKey);
-    cacheId(generatedId as string, injectId(targetKey));
+    const generatedId = cacheId(id as string, injectId(targetKey));
     const realCid = typeof generatedId === 'symbol' || id ? generatedId : cid[generatedId];
 
     // For Components
