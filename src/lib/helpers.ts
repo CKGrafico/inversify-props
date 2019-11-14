@@ -15,9 +15,9 @@ const keyToId = (key: string) => {
 
 export let DependencyId: { [key: string]: string | symbol; } = {};
 
-export function cacheId(customId: string, id: string): string | symbol {
+export function cacheId(customId: string | symbol, id: string): string | symbol {
   if (customId) {
-    DependencyId[customId] = customId;
+    DependencyId[customId.toString()] = customId;
     return customId;
   }
 
@@ -89,6 +89,8 @@ export function injectId(target: any): string {
  * })
  */
 export function mockInject(target: any, key: any, mock: any) {
+  console.log('this method is going to be deprecated soon, use mockDependency and check docs.');
+
   const getter = () => {
     return mock;
   };
@@ -109,3 +111,41 @@ export function injectable(customId?: string) {
     return __injectable()(target);
   };
 }
+
+/**
+ * Unbind all dependencies from container
+ */
+export function resetContainer() {
+  container.unbindAll();
+}
+
+/**
+ * After container is generated, mock an existing dependency as Singleton
+ */
+export function mockSingleton<T>(id: string | symbol, to: {
+  new (...args: any[]): T;
+}) {
+  container.unbind(id);
+  container.addSingleton<T>(to, id);
+}
+
+/**
+ * After container is generated, mock an existing dependency as Transient
+ */
+export function mockTransient<T>(id: string | symbol, to: {
+  new (...args: any[]): T;
+}) {
+  container.unbind(id);
+  container.addTransient<T>(to, id);
+}
+
+/**
+ * After container is generated, mock an existing dependency as Request
+ */
+export function mockRequest<T>(id: string | symbol, to: {
+  new (...args: any[]): T;
+}) {
+  container.unbind(id);
+  container.addRequest<T>(to, id);
+}
+

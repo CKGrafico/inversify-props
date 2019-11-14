@@ -1,10 +1,10 @@
 import { Container as InversifyContainer, interfaces } from 'inversify';
-import { injectId, cacheId } from './helpers';
+import { cacheId, injectId } from './helpers';
 
 export class Container extends InversifyContainer {
   public bindTo<T>(constructor: {
     new (...args: any[]): T;
-  }, id?: string): interfaces.BindingInWhenOnSyntax<T> {
+  }, id?: string | symbol): interfaces.BindingInWhenOnSyntax<T> {
 
     const dependencyId = cacheId(id, injectId(constructor));
     return super.bind<T>(dependencyId).to(constructor);
@@ -12,7 +12,7 @@ export class Container extends InversifyContainer {
 
   public addTransient<T>(constructor: {
     new (...args: any[]): T;
-  }, id?: string): interfaces.BindingWhenOnSyntax<T> {
+  }, id?: string | symbol): interfaces.BindingWhenOnSyntax<T> {
 
     const dependencyId = cacheId(id, injectId(constructor));
     return super.bind<T>(dependencyId).to(constructor).inTransientScope();
@@ -20,7 +20,7 @@ export class Container extends InversifyContainer {
 
   public addSingleton<T>(constructor: {
     new (...args: any[]): T;
-  }, id?: string): interfaces.BindingWhenOnSyntax<T> {
+  }, id?: string | symbol): interfaces.BindingWhenOnSyntax<T> {
 
     const dependencyId = cacheId(id, injectId(constructor));
     return super.bind<T>(dependencyId).to(constructor).inSingletonScope();
@@ -28,7 +28,7 @@ export class Container extends InversifyContainer {
 
   public addRequest<T>(constructor: {
     new (...args: any[]): T;
-  }, id?: string): interfaces.BindingWhenOnSyntax<T> {
+  }, id?: string | symbol): interfaces.BindingWhenOnSyntax<T> {
 
     const dependencyId = cacheId(id, injectId(constructor));
     return super.bind<T>(dependencyId).to(constructor).inRequestScope();

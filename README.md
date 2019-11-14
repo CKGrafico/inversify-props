@@ -126,6 +126,21 @@ Now is time to register the service in the container, we usually do that in `app
  container.addSingleton<IService1>(Service1);
 ```
 
+## How to test
+There are some helper functions to test, the recommended way to test is beforeEach test:
+
+1. Reset the Container
+2. Register again all the dependencies of the container (this is your job)
+3. Mock all the necessary dependencies for the test
+
+```
+beforeEach(() => {
+  resetContainer();
+  containerBuilder();
+  mockSingleton<IHttpService>(cid.IHttpService, HttpServiceMock);
+});
+```
+
 ## Other ways to register a class
 As [inversify accepts](https://github.com/inversify/InversifyJS/blob/master/wiki/scope.md), we have configured three types of registration.
 - Singleton: The dependency will be created only once, one dependency - one object.
