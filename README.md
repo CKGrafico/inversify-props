@@ -35,7 +35,7 @@ export default class extends Component {
 ## Alternative usage (without magic)
 ```
 import 'reflect-metadata'; // Import only once
-import { container, inject } from 'inversify-props';
+import { cid, container, inject } from 'inversify-props';
 
 container.addSingleton<IService1>(Service1);
 
