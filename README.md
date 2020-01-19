@@ -12,14 +12,14 @@ Do you use Hooks? You can try the experimental package [inversify-hooks](https:/
 ![logo](https://i.imgur.com/syVbzU6.gif)
 
 ## Installation
-```
+```bash
 $ npm install inversify-props reflect-metadata --save
 ```
 
 The inversify-props type definitions are included in the inversify-props npm package.
 
 ## How to use
-```
+```ts
 import 'reflect-metadata'; // Import only once
 import { container, inject } from 'inversify-props';
 
@@ -33,7 +33,7 @@ export default class extends Component {
 ```
 
 ## Alternative usage (without magic)
-```
+```ts
 import 'reflect-metadata'; // Import only once
 import { cid, container, inject } from 'inversify-props';
 
@@ -45,7 +45,7 @@ export default class extends Component {
 ```
 
 ## How to use this library outside of a component
-```
+```ts
 container.addSingleton<IService1>(Service1, 'MyService1');
 
 // You can inject in other services as a Prop
@@ -65,7 +65,7 @@ export function myHelper() {
 ```
 
 ## You can also use any ID that you prefer
-```
+```ts
 import 'reflect-metadata'; // Import only once
 import { container, inject } from 'inversify-props';
 
@@ -79,7 +79,7 @@ export default class extends Component {
 > :warning: **Important!** inversify-props requires TypeScript >= 2.0 and the `experimentalDecorators`, `emitDecoratorMetadata`, `types` and `lib`
 compilation options in your `tsconfig.json` file.
 
-```js
+```json
 {
     "compilerOptions": {
         "target": "es5",
@@ -105,7 +105,7 @@ The idea is to add a simple wrapper that helps us to inject dependencies in comp
 Inversify needs an id to register our dependencies, this wrapper is going to do this for you 'magically' but if you want to uglify the code, keep reading the docs 🤓.
 
 First of all create a class and an interface with the public methods of your class.
-```
+```ts
 // iservice1.ts
 export interface IService1 {
     method1(): string;
@@ -122,7 +122,7 @@ export class Service1 implements IService1 {
 > Note: Don't forget to decorate the class as `@injectable()` this will made your class candidate to be injectable inside other.
 
 Now is time to register the service in the container, we usually do that in `app.container.ts` or `app.ts`.
-```
+```ts
  container.addSingleton<IService1>(Service1);
 ```
 
@@ -133,7 +133,7 @@ There are some helper functions to test, the recommended way to test is beforeEa
 2. Register again all the dependencies of the container (this is your job)
 3. Mock all the necessary dependencies for the test
 
-```
+```ts
 beforeEach(() => {
   resetContainer();
   containerBuilder();
@@ -149,7 +149,7 @@ As [inversify accepts](https://github.com/inversify/InversifyJS/blob/master/wiki
 
 ## How to use in your components
 Once your dependencies are registered in the container, is simple as create a property with the name and the interface.
-```
+```ts
 export default class extends Component {
   @inject() service1: IService1;
 }
@@ -165,7 +165,7 @@ export default class extends Component {
 ## How to configure Uglify or Terser
 If you want to use Uglify or Terser to obfuscate the code, you will need to add this options to preserve the names of the classes (we need them to generate the ids `magically` 😉).
 
-```
+```ts
 new UglifyJSPlugin({
   uglifyOptions: {
     keep_classnames: true,
@@ -174,7 +174,7 @@ new UglifyJSPlugin({
 });
 ```
 
-```
+```ts
 new TerserPlugin({
   terserOptions: {
     keep_classnames: true,
