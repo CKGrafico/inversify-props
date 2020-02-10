@@ -1,16 +1,16 @@
-import { inject as __inject, injectable as __injectable } from 'inversify';
-import { cid, container } from '..';
+import { inject as __inject, injectable as __injectable } from "inversify";
+import { cid, container } from "..";
 /**
  * @param key the name of the property,
  * If the interface is IMyService the key must be myService or _myService
  */
 const keyToId = (key: string) => {
   if (!key) {
-    throw new Error('A key is necessary to load this interface');
+    throw new Error("A key is necessary to load this interface");
   }
 
-  const prefix = 'I' + key[0].toUpperCase();
-  return prefix + key.slice(1).replace('_', '');
+  const prefix = "I" + key[0].toUpperCase();
+  return prefix + key.slice(1).replace("_", "");
 };
 
 export let DependencyId: { [key: string]: string | symbol } = {};
@@ -33,17 +33,17 @@ export function cacheId(
  * @param id optional id, could be auto generated with prop name
  */
 export function Inject(id?: string | symbol, debug = false) {
-  log(debug, `DI: Registering ${id ? id.toString() : ''}`);
+  log(debug, `DI: Registering ${id ? id.toString() : ""}`);
   return (target: any, targetKey: string, index?: number) => {
     // Is parameter decorator
-    if (typeof index === 'number') {
+    if (typeof index === "number") {
       const args = target
         .toString()
         .match(/(constructor|function) (.*) ?\((.*)\)/);
 
       log(
         debug,
-        `DI: Parameter ${id ? id.toString() : ''}`,
+        `DI: Parameter ${id ? id.toString() : ""}`,
         target,
         target.toString(),
         targetKey,
@@ -55,15 +55,15 @@ export function Inject(id?: string | symbol, debug = false) {
       }
 
       const listOfArgs = args[3]
-        .split(',')
-        .map(arg => arg.replace(/\/\*.*\*\//, '').trim())
+        .split(",")
+        .map(arg => arg.replace(/\/\*.*\*\//, "").trim())
         .filter(x => x);
       const key = listOfArgs[index];
       const dependencyId = cacheId(id as string, injectId(key));
 
       log(
         debug,
-        `DI: Parameter ARGS ${id ? id.toString() : ''}`,
+        `DI: Parameter ARGS ${id ? id.toString() : ""}`,
         listOfArgs,
         key.dependencyId
       );
@@ -75,13 +75,14 @@ export function Inject(id?: string | symbol, debug = false) {
     // Create id
     const generatedId = cacheId(id as string, injectId(targetKey));
     const realCid =
-      typeof generatedId === 'symbol' || id ? generatedId : cid[generatedId];
+      typeof generatedId === "symbol" || id ? generatedId : cid[generatedId];
 
     log(
       debug,
-      `DI: Parameter PROPS ${id ? id.toString() : ''}`,
+      `DI: Parameter PROPS ${id ? id.toString() : ""}`,
       generatedId,
-      realCid
+      realCid,
+      cid
     );
 
     // For Components
@@ -122,7 +123,7 @@ export function injectId(target: any): string {
  */
 export function mockInject(target: any, key: any, mock: any) {
   console.log(
-    'this method is going to be deprecated soon, use mockDependency and check docs.'
+    "this method is going to be deprecated soon, use mockDependency and check docs."
   );
 
   const getter = () => {

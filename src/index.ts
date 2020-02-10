@@ -4,7 +4,7 @@ import { DependencyId, Inject, inject, injectable, mockInject, mockRequest, mock
 // How to inject a dependency
 // @Inject() nameService: INameService;
 
-export const container: Container = new Container();
+export const container: Container = new Container({skipBaseClassChecks: true});
 
 const cid = DependencyId;
 
