@@ -13,9 +13,12 @@ const keyToId = (key: string) => {
   return prefix + key.slice(1).replace('_', '');
 };
 
-export let DependencyId: { [key: string]: string | symbol; } = {};
+export let DependencyId: { [key: string]: string | symbol } = {};
 
-export function cacheId(customId: string | symbol, id: string): string | symbol {
+export function cacheId(
+  customId: string | symbol,
+  id: string
+): string | symbol {
   if (customId) {
     DependencyId[customId.toString()] = customId;
     return customId;
@@ -29,20 +32,41 @@ export function cacheId(customId: string | symbol, id: string): string | symbol 
  * Decorator to inject dependencies in components or classes
  * @param id optional id, could be auto generated with prop name
  */
-export function Inject(id?: string | symbol) {
+export function Inject(id?: string | symbol, debug = false) {
+  log(debug, `DI: Registering ${id ? id.toString() : ''}`);
   return (target: any, targetKey: string, index?: number) => {
-
     // Is parameter decorator
     if (typeof index === 'number') {
-      const args = target.toString().match(/[constructor|function].*?\(([^)]*)\)/);
+      const args = target
+        .toString()
+        .match(/(constructor|function) (.*) ?\((.*)\)/);
+
+      log(
+        debug,
+        `DI: Parameter ${id ? id.toString() : ''}`,
+        target,
+        target.toString(),
+        targetKey,
+        index
+      );
 
       if (!args) {
         throw new Error(`Cannot find constructor in this class ${target.name}`);
       }
 
-      const listOfArgs = args[1].split(',').map(arg => (arg.replace(/\/\*.*\*\//, '').trim())).filter(x => x);
+      const listOfArgs = args[3]
+        .split(',')
+        .map(arg => arg.replace(/\/\*.*\*\//, '').trim())
+        .filter(x => x);
       const key = listOfArgs[index];
       const dependencyId = cacheId(id as string, injectId(key));
+
+      log(
+        debug,
+        `DI: Parameter ARGS ${id ? id.toString() : ''}`,
+        listOfArgs,
+        key.dependencyId
+      );
 
       return __inject(dependencyId)(target, targetKey, index);
     }
@@ -50,7 +74,15 @@ export function Inject(id?: string | symbol) {
     // Is property decorator
     // Create id
     const generatedId = cacheId(id as string, injectId(targetKey));
-    const realCid = typeof generatedId === 'symbol' || id ? generatedId : cid[generatedId];
+    const realCid =
+      typeof generatedId === 'symbol' || id ? generatedId : cid[generatedId];
+
+    log(
+      debug,
+      `DI: Parameter PROPS ${id ? id.toString() : ''}`,
+      generatedId,
+      realCid
+    );
 
     // For Components
     Reflect.deleteProperty(target, targetKey);
@@ -89,7 +121,9 @@ export function injectId(target: any): string {
  * })
  */
 export function mockInject(target: any, key: any, mock: any) {
-  console.log('this method is going to be deprecated soon, use mockDependency and check docs.');
+  console.log(
+    'this method is going to be deprecated soon, use mockDependency and check docs.'
+  );
 
   const getter = () => {
     return mock;
@@ -106,7 +140,7 @@ export function mockInject(target: any, key: any, mock: any) {
  * Help Injectable to cache id if necessary
  */
 export function injectable(customId?: string) {
-  return function (target: any) {
+  return function(target: any) {
     cacheId(customId, injectId(target));
     return __injectable()(target);
   };
@@ -122,9 +156,12 @@ export function resetContainer() {
 /**
  * After container is generated, mock an existing dependency as Singleton
  */
-export function mockSingleton<T>(id: string | symbol, to: {
-  new (...args: any[]): T;
-}) {
+export function mockSingleton<T>(
+  id: string | symbol,
+  to: {
+    new (...args: any[]): T;
+  }
+) {
   container.unbind(id);
   container.addSingleton<T>(to, id);
 }
@@ -132,9 +169,12 @@ export function mockSingleton<T>(id: string | symbol, to: {
 /**
  * After container is generated, mock an existing dependency as Transient
  */
-export function mockTransient<T>(id: string | symbol, to: {
-  new (...args: any[]): T;
-}) {
+export function mockTransient<T>(
+  id: string | symbol,
+  to: {
+    new (...args: any[]): T;
+  }
+) {
   container.unbind(id);
   container.addTransient<T>(to, id);
 }
@@ -142,10 +182,24 @@ export function mockTransient<T>(id: string | symbol, to: {
 /**
  * After container is generated, mock an existing dependency as Request
  */
-export function mockRequest<T>(id: string | symbol, to: {
-  new (...args: any[]): T;
-}) {
+export function mockRequest<T>(
+  id: string | symbol,
+  to: {
+    new (...args: any[]): T;
+  }
+) {
   container.unbind(id);
   container.addRequest<T>(to, id);
 }
 
+/**
+ * Private method to log if necessary
+ */
+
+function log(debug = false, ...messages: any[]) {
+  if (!debug) {
+    return;
+  }
+
+  console.log(...messages);
+}
