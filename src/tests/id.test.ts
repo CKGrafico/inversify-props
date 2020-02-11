@@ -73,7 +73,7 @@ describe('Id Helper', () => {
     test('should return the constructor name', () => {
       class Dummy {}
 
-      expect(generateIdNameFromConstructor(Dummy)).toBe('Dummy');
+      expect(generateIdNameFromConstructor(Dummy)).toBe('DUMMY');
     });
   });
 });

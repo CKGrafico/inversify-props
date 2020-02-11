@@ -7,7 +7,7 @@ export function generateIdOfDependency<T>(constructor: Constructor<T>, id?: Id):
 }
 
 export function generateIdNameFromConstructor<T>(constructor: Constructor<T>) {
-  return constructor.name;
+  return constructor.name.toUpperCase();
 }
 
 export function generateIdNameOfDependency<T>(constructor: Constructor<T>, id?: Id): string {

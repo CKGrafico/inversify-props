@@ -1,5 +1,6 @@
-import { Container as InversifyContainer, decorate, injectable, interfaces } from 'inversify';
+import { Container as InversifyContainer, decorate, interfaces } from 'inversify';
 import { generateIdAndAddToCache } from './id.helper';
+import { injectable } from './inject.helper';
 import { Constructor, Id } from './inversify.types';
 
 /**
