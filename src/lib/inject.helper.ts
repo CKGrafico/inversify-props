@@ -37,7 +37,6 @@ function injectParameterDecorator(target: Constructor, methodName: string, index
   const currentParameter = parameters[index];
   const cacheIdNameFromParameter = cleanParameter(currentParameter);
   const cachedId = idsCache[cacheIdNameFromParameter];
-  console.log(idsCache, cachedId, target, methodName, index);
 
   return __inject(cachedId)(target, methodName, index);
 }

@@ -1,3 +1,4 @@
+import { generateIdName } from './id.helper';
 import { Constructor } from './inversify.types';
 
 export function getParametersFromConstructor(constructor: Constructor): string[] {
@@ -23,5 +24,5 @@ export function convertStringParametersToList(stringParameters: string): string[
 }
 
 export function cleanParameter(parameter: string): string {
-  return parameter.toUpperCase().replace(/_/g, '');
+  return generateIdName(parameter).replace(/_/g, '');
 }

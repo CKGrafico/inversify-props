@@ -1,4 +1,4 @@
-import { addIdToCache, generateIdNameFromConstructor, generateIdOfDependency, idsCache } from '../lib/id.helper';
+import { addIdToCache, generateIdName, generateIdOfDependency, idsCache } from '../lib/id.helper';
 
 describe('Id Helper', () => {
   describe('When generate Ids receives a Class with an Interface and an Id', () => {
@@ -73,7 +73,13 @@ describe('Id Helper', () => {
     test('should return the constructor name', () => {
       class Dummy {}
 
-      expect(generateIdNameFromConstructor(Dummy)).toBe('DUMMY');
+      expect(generateIdName(Dummy.name)).toBe('Dummy');
+    });
+
+    test('should return the constructor name in the same form case insensitive duMMy -> Dummy', () => {
+      class dUmmY {}
+
+      expect(generateIdName(dUmmY.name)).toBe('Dummy');
     });
   });
 });

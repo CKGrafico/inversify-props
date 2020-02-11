@@ -6,12 +6,13 @@ export function generateIdOfDependency<T>(constructor: Constructor<T>, id?: Id):
   return id || Symbol(constructor.name);
 }
 
-export function generateIdNameFromConstructor<T>(constructor: Constructor<T>) {
-  return constructor.name.toUpperCase();
+export function generateIdName(constructorName: string) {
+  const name = constructorName.toLowerCase();
+  return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
 export function generateIdNameOfDependency<T>(constructor: Constructor<T>, id?: Id): string {
-  return id ? id.toString() : generateIdNameFromConstructor(constructor);
+  return id ? id.toString() : generateIdName(constructor.name);
 }
 
 export function addIdToCache(id: Id, name: string): Id {
