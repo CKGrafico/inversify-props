@@ -1,4 +1,4 @@
-import { generateIdOfDependency } from '../lib/id.helper';
+import { addIdToCache, generateIdOfDependency, idsCache } from '../lib/id.helper';
 
 describe('Id Helper', () => {
   describe('When generate Ids receives a Class with an Interface and an Id', () => {
@@ -30,7 +30,7 @@ describe('Id Helper', () => {
   });
 
   describe('When generate Ids receives a Class with an Interface and NOT an Id', () => {
-    test('should return ____', () => {
+    test('should return a Symbol id', () => {
       interface IDummy {}
 
       class Dummy implements IDummy {}
@@ -39,7 +39,35 @@ describe('Id Helper', () => {
 
       const generatedId = generateIdOfDependency<IDummy>(Dummy, id);
 
-      expect(generatedId).toBe('___');
+      expect(generatedId.toString()).toBe('Symbol(Dummy)');
+      expect(typeof generatedId).toBe('symbol');
+    });
+  });
+
+  describe('When adds new id to the cache', () => {
+    test('should cache it and return the same value', () => {
+      const id = 'test id';
+      const name = 'test';
+
+      const cachedId = addIdToCache(id, name);
+
+      expect(idsCache[id].id).toBe(id);
+      expect(idsCache[id].name).toBe(name);
+      expect(cachedId.id).toBe(id);
+      expect(cachedId.name).toBe(name);
+    });
+
+    test('should not cache it id exist', () => {
+      const id = 'test id';
+      const name = 'test';
+      const fakevalue = 'fake';
+
+      addIdToCache(id, name);
+      idsCache[id].id = fakevalue;
+      const cachedAgainId = addIdToCache(id, name);
+
+      expect(cachedAgainId.id).not.toBe(id);
+      expect(cachedAgainId.id).toBe(fakevalue);
     });
   });
 });

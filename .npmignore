@@ -4,3 +4,4 @@ node_modules/
 examples/
 test/
 jest.config.js
+coverage/

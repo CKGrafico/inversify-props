@@ -27,13 +27,13 @@
     "polymer"
   ],
   "dependencies": {
-    "inversify": "^5.0.1",
-    "typescript": "^3.7.5"
+    "inversify": "^5.0.1"
   },
   "devDependencies": {
     "@types/jest": "^25.1.2",
     "jest": "^25.1.0",
     "reflect-metadata": "^0.1.13",
-    "ts-jest": "^25.2.0"
+    "ts-jest": "^25.2.0",
+    "typescript": "^3.7.5"
   }
 }

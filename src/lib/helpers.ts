@@ -13,18 +13,6 @@ const keyToId = (key: string) => {
   return prefix + key.slice(1).replace('_', '');
 };
 
-export let DependencyId: { [key: string]: string | symbol } = {};
-
-export function cacheId(customId: string | symbol, id: string): string | symbol {
-  if (customId) {
-    DependencyId[customId.toString()] = customId;
-    return customId;
-  }
-
-  DependencyId[id] = DependencyId[id] || Symbol(id);
-  return DependencyId[id];
-}
-
 /**
  * Decorator to inject dependencies in components or classes
  * @param id optional id, could be auto generated with prop name
