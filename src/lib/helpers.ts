@@ -192,15 +192,3 @@ export function mockRequest<T>(
   container.unbind(id);
   container.addRequest<T>(to, id);
 }
-
-/**
- * Private method to log if necessary
- */
-
-function log(debug = false, ...messages: any[]) {
-  if (!debug) {
-    return;
-  }
-
-  console.log(...messages);
-}
