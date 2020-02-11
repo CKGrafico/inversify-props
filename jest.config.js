@@ -13,5 +13,6 @@ module.exports = {
       tsConfig: 'src/tsconfig.json'
     }
   },
-  collectCoverage: true
+  collectCoverage: true,
+  setupFiles: ['./jest.setup.js']
 };

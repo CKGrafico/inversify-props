@@ -1,28 +1,6 @@
-import { Container, setContainer } from './lib/container';
-import {
-  DependencyId,
-  Inject,
-  inject,
-  injectable,
-  mockInject,
-  mockRequest,
-  mockSingleton,
-  mockTransient,
-  resetContainer
-} from './lib/helpers';
+import { setContainer } from './lib/container';
+import { idsCache } from './lib/id.helper';
 
 export const container = setContainer({ skipBaseClassChecks: true });
-const cid = DependencyId;
 
-export {
-  Inject,
-  inject,
-  injectable,
-  Container,
-  mockInject,
-  mockRequest,
-  mockSingleton,
-  mockTransient,
-  resetContainer,
-  cid
-};
+export const cid = idsCache;

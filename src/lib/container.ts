@@ -1,4 +1,4 @@
-import { Container as InversifyContainer, interfaces } from 'inversify';
+import { Container as InversifyContainer, decorate, injectable, interfaces } from 'inversify';
 import { generateIdAndAddToCache } from './id.helper';
 import { Constructor, Id } from './inversify.types';
 
@@ -8,13 +8,15 @@ import { Constructor, Id } from './inversify.types';
  */
 export class Container extends InversifyContainer {
   public bindTo<T>(constructor: Constructor<T>, customId?: Id): interfaces.BindingInWhenOnSyntax<T> {
-    const { id } = generateIdAndAddToCache(constructor, customId);
+    const id = generateIdAndAddToCache(constructor, customId);
+    decorate(injectable(), constructor);
 
     return super.bind<T>(id).to(constructor);
   }
 
   public addTransient<T>(constructor: Constructor<T>, customId?: Id): interfaces.BindingWhenOnSyntax<T> {
-    const { id } = generateIdAndAddToCache(constructor, customId);
+    const id = generateIdAndAddToCache(constructor, customId);
+    decorate(injectable(), constructor);
 
     return super
       .bind<T>(id)
@@ -23,7 +25,8 @@ export class Container extends InversifyContainer {
   }
 
   public addSingleton<T>(constructor: Constructor<T>, customId?: Id): interfaces.BindingWhenOnSyntax<T> {
-    const { id } = generateIdAndAddToCache(constructor, customId);
+    const id = generateIdAndAddToCache(constructor, customId);
+    decorate(injectable(), constructor);
 
     return super
       .bind<T>(id)
@@ -32,7 +35,8 @@ export class Container extends InversifyContainer {
   }
 
   public addRequest<T>(constructor: Constructor<T>, customId?: Id): interfaces.BindingWhenOnSyntax<T> {
-    const { id } = generateIdAndAddToCache(constructor, customId);
+    const id = generateIdAndAddToCache(constructor, customId);
+    decorate(injectable(), constructor);
 
     return super
       .bind<T>(id)
@@ -47,17 +51,14 @@ export class Container extends InversifyContainer {
 
 let container: Container;
 
-/**
- * Function that will be used only inside the library to get the correct container instance
- */
 export function getContainer(): Container {
   return container;
 }
 
-/**
- * Function to set the instance of the container, could be used outside the library
- */
-
 export function setContainer(options?: interfaces.ContainerOptions): Container {
   return (container = new Container(options));
+}
+
+export function resetContainer() {
+  getContainer().unbindAll();
 }

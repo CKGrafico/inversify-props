@@ -1,21 +1,21 @@
-import { addIdToCache, generateIdOfDependency } from './id.helper';
-import { Constructor, Id } from './inversify.types';
+import { inject as __inject } from 'inversify';
+import { getContainer } from './container';
+import { generateIdAndAddToCache } from './id.helper';
+import { Id } from './inversify.types';
 import { log } from './log.helper';
 
-export function inject(id?: Id, debug = false) {
-  return (constructor: Constructor, methodName: string, index?: number) => {
-    const dependencyId = generateIdOfDependency(constructor, id);
-    const cachedId = addIdToCache(dependencyId);
+export function inject(customId?: Id, debug = false) {
+  return (target: any, methodName: string, index?: number) => {
+    console.log(target);
+    const cachedId = generateIdAndAddToCache(target, customId);
 
-    log(debug, 'DI: Registering', constructor, index, cachedId);
+    log(debug, 'DI: Registering', target, index, cachedId);
 
     if (isParameterDecorator(index)) {
-      log(debug, 'DI: is parameter decorator');
-      return injectParameterDecorator(constructor, index, cachedId, debug);
+      return injectParameterDecorator(target, methodName, index, cachedId, debug);
     }
 
-    log(debug, 'DI: is property decorator');
-    // return injectPropertyDecorator(constructor, methodName, cachedId, debug);
+    return injectPropertyDecorator(target, methodName, cachedId, debug);
   };
 }
 
@@ -25,6 +25,24 @@ export function isParameterDecorator(index: number): boolean {
   return index !== undefined ? typeof index === 'number' : false;
 }
 
-function injectParameterDecorator(constructor: Constructor, index: number, id?: Id, debug = false) {
-  console.log(id, constructor.name, index);
+function injectParameterDecorator(target: any, methodName: string, index: number, cachedId: Id, debug = false) {
+  log(debug, 'DI: is parameter decorator', cachedId, target, index);
+
+  return __inject(cachedId)(target, methodName, index);
+}
+
+function injectPropertyDecorator(target: any, methodName: string, cachedId: Id, debug = false) {
+  log(debug, 'DI: is method/property decorator', cachedId, target);
+
+  Reflect.deleteProperty(target, methodName);
+  Reflect.defineProperty(target, methodName, {
+    get() {
+      return getContainer().get(cachedId);
+    },
+    set(value) {
+      return value;
+    }
+  });
+
+  return __inject(cachedId)(target, methodName);
 }

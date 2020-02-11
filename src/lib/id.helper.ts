@@ -1,29 +1,30 @@
-import { CachedId, Constructor, Id, IdsCache } from './inversify.types';
+import { Constructor, Id, IdsCache } from './inversify.types';
 
 export const idsCache: IdsCache = {};
 
-export function generateIdOfDependency<T>(constructor: Constructor<T>, id: Id): Id {
+export function generateIdOfDependency<T>(constructor: Constructor<T>, id?: Id): Id {
   return id || Symbol(constructor.name);
 }
 
-export function generateIdNameOfDependency<T>(constructor: Constructor<T>, id: Id): string {
-  return id.toString() || constructor.name;
+export function generateIdNameFromConstructor<T>(constructor: Constructor<T>) {
+  return constructor.name;
 }
 
-export function addIdToCache(id: Id, name: string): CachedId {
-  const existingId = idsCache[id.toString()];
+export function generateIdNameOfDependency<T>(constructor: Constructor<T>, id?: Id): string {
+  return id ? id.toString() : generateIdNameFromConstructor(constructor);
+}
+
+export function addIdToCache(id: Id, name: string): Id {
+  const existingId = idsCache[name];
 
   if (existingId) {
     return existingId;
   }
 
-  return (idsCache[id.toString()] = {
-    id,
-    name
-  });
+  return (idsCache[name] = id);
 }
 
-export function generateIdAndAddToCache<T>(constructor: Constructor<T>, id?: Id): CachedId {
+export function generateIdAndAddToCache<T>(constructor: Constructor<T>, id?: Id): Id {
   const dependencyId = generateIdOfDependency(constructor, id);
   const dependencyIdName = generateIdNameOfDependency(constructor, id);
   const cachedId = addIdToCache(dependencyId, dependencyIdName);

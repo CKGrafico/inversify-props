@@ -1,4 +1,4 @@
-import { addIdToCache, generateIdOfDependency, idsCache } from '../lib/id.helper';
+import { addIdToCache, generateIdNameFromConstructor, generateIdOfDependency, idsCache } from '../lib/id.helper';
 
 describe('Id Helper', () => {
   describe('When generate Ids receives a Class with an Interface and an Id', () => {
@@ -51,10 +51,8 @@ describe('Id Helper', () => {
 
       const cachedId = addIdToCache(id, name);
 
-      expect(idsCache[id].id).toBe(id);
-      expect(idsCache[id].name).toBe(name);
-      expect(cachedId.id).toBe(id);
-      expect(cachedId.name).toBe(name);
+      expect(idsCache[name]).toBe(id);
+      expect(cachedId).toBe(id);
     });
 
     test('should not cache it id exist', () => {
@@ -63,11 +61,19 @@ describe('Id Helper', () => {
       const fakevalue = 'fake';
 
       addIdToCache(id, name);
-      idsCache[id].id = fakevalue;
+      idsCache[name] = fakevalue;
       const cachedAgainId = addIdToCache(id, name);
 
-      expect(cachedAgainId.id).not.toBe(id);
-      expect(cachedAgainId.id).toBe(fakevalue);
+      expect(cachedAgainId).not.toBe(id);
+      expect(cachedAgainId).toBe(fakevalue);
+    });
+  });
+
+  describe('When generate name is called', () => {
+    test('should return the constructor name', () => {
+      class Dummy {}
+
+      expect(generateIdNameFromConstructor(Dummy)).toBe('Dummy');
     });
   });
 });
