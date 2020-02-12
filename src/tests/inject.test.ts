@@ -75,5 +75,140 @@ describe('Inject Helper', () => {
       expect(dependency.test()).toBe('example');
       resetContainer();
     });
+
+    test('should be able to register a dependency as parameter with the same name if first char is lowercase and the prefix is an underscore', () => {
+      interface IDummy {
+        example(): string;
+      }
+
+      class Dummy implements IDummy {
+        public example(): string {
+          return 'example';
+        }
+      }
+
+      container.addSingleton<IDummy>(Dummy);
+
+      interface IOtherDummy {
+        test(): string;
+      }
+
+      class OtherDummy implements IOtherDummy {
+        constructor(@inject() private _dummy: IDummy) {}
+
+        public test(): string {
+          return this._dummy.example();
+        }
+      }
+
+      container.addSingleton<IOtherDummy>(OtherDummy);
+      const dependency = container.get<IOtherDummy>(cid.OtherDummy);
+
+      expect(dependency.test()).toBe('example');
+      resetContainer();
+    });
+  });
+
+  describe('When is a property/method decorator', () => {
+    test('should be able to register a dependency as parameter with the same name', () => {
+      interface IDummy {
+        example(): string;
+      }
+
+      class Dummy implements IDummy {
+        public example(): string {
+          return 'example';
+        }
+      }
+
+      container.addSingleton<IDummy>(Dummy);
+
+      interface IOtherDummy {
+        test(): string;
+      }
+
+      class OtherDummy implements IOtherDummy {
+        @inject() private Dummy: IDummy;
+        constructor() {}
+
+        public test(): string {
+          return this.Dummy.example();
+        }
+      }
+
+      container.addSingleton<IOtherDummy>(OtherDummy);
+      const dependency = container.get<IOtherDummy>(cid.OtherDummy);
+
+      expect(dependency.test()).toBe('example');
+      resetContainer();
+    });
+
+    test('should be able to register a dependency as parameter with the same name if first char is lowercase', () => {
+      interface IDummy {
+        example(): string;
+      }
+
+      class Dummy implements IDummy {
+        public example(): string {
+          return 'example';
+        }
+      }
+
+      container.addSingleton<IDummy>(Dummy);
+
+      interface IOtherDummy {
+        test(): string;
+      }
+
+      class OtherDummy implements IOtherDummy {
+        @inject() private dummy: IDummy;
+
+        constructor() {}
+
+        public test(): string {
+          return this.dummy.example();
+        }
+      }
+
+      container.addSingleton<IOtherDummy>(OtherDummy);
+      const dependency = container.get<IOtherDummy>(cid.OtherDummy);
+
+      expect(dependency.test()).toBe('example');
+      resetContainer();
+    });
+
+    test('should be able to register a dependency as parameter with the same name if first char is lowercase and the prefix is an underscore', () => {
+      interface IDummy {
+        example(): string;
+      }
+
+      class Dummy implements IDummy {
+        public example(): string {
+          return 'example';
+        }
+      }
+
+      container.addSingleton<IDummy>(Dummy);
+
+      interface IOtherDummy {
+        test(): string;
+      }
+
+      class OtherDummy implements IOtherDummy {
+        @inject() private _dummy: IDummy;
+
+        constructor() {}
+
+        public test(): string {
+          return this._dummy.example();
+        }
+      }
+
+      container.addSingleton<IOtherDummy>(OtherDummy);
+      const dependency = container.get<IOtherDummy>(cid.OtherDummy);
+
+      expect(dependency.test()).toBe('example');
+      resetContainer();
+    });
   });
 });
