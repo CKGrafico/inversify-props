@@ -32,3 +32,12 @@ export function generateIdAndAddToCache<T>(constructor: Constructor<T>, id?: Id)
 
   return cachedId;
 }
+
+export function getIdFromCache(name: string): Id {
+  // Here I have to map all the objecty keys case insensitive
+  const [, foundId] = Object.entries(idsCache).find([key, value]) => {
+    return key === name;
+  });
+
+  return foundId;
+}

@@ -1,5 +1,5 @@
 import { inject as __inject, injectable as __injectable } from 'inversify';
-import { idsCache } from './id.helper';
+import { getIdFromCache } from './id.helper';
 import { Constructor, Id } from './inversify.types';
 import { log } from './log.helper';
 import { cleanParameter, getParametersFromConstructor } from './parameters.helper';
@@ -36,7 +36,7 @@ function injectParameterDecorator(target: Constructor, methodName: string, index
   const parameters = getParametersFromConstructor(target);
   const currentParameter = parameters[index];
   const cacheIdNameFromParameter = cleanParameter(currentParameter);
-  const cachedId = idsCache[cacheIdNameFromParameter];
+  const cachedId = getIdFromCache(cacheIdNameFromParameter);
 
   return __inject(cachedId)(target, methodName, index);
 }
