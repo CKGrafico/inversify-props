@@ -2,7 +2,7 @@ import {
   addIdToCache,
   generateIdName,
   generateIdOfDependency,
-  getIdFromCache,
+  getOrSetIdFromCache,
   idsCache,
   resetIdsCache
 } from '../lib/id.helper';
@@ -58,7 +58,7 @@ describe('Id Helper', () => {
 
       const cachedId = addIdToCache(id, name);
 
-      expect(getIdFromCache(name)).toBe(id);
+      expect(getOrSetIdFromCache(name)).toBe(id);
       expect(cachedId).toBe(id);
       resetIdsCache();
     });
@@ -80,7 +80,7 @@ describe('Id Helper', () => {
     test('should throw an error if id is not cached', () => {
       const name = 'test';
 
-      expect(() => getIdFromCache(name)).toThrowError();
+      expect(() => getOrSetIdFromCache(name)).toThrowError();
     });
   });
 

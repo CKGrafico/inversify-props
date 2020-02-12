@@ -6,8 +6,12 @@ export function resetIdsCache() {
   idsCache = {};
 }
 
+export function generateIdFromName(name: string, id?: Id): Id {
+  return id || Symbol(name);
+}
+
 export function generateIdOfDependency<T>(constructor: Constructor<T>, id?: Id): Id {
-  return id || Symbol(constructor.name);
+  return generateIdFromName(constructor.name, id);
 }
 
 export function generateIdName(constructorName: string) {
@@ -37,12 +41,14 @@ export function generateIdAndAddToCache<T>(constructor: Constructor<T>, id?: Id)
   return cachedId;
 }
 
-export function getIdFromCache(name: string): Id {
-  const foundId = idsCache[name];
+export function getOrSetIdFromCache(dependencyIdName: string, id?: Id): Id {
+  const cachedId = idsCache[dependencyIdName];
 
-  if (!foundId) {
-    throw new Error(`Cannot find ${name} in saved ids from container`);
+  if (cachedId) {
+    return cachedId;
   }
 
-  return foundId;
+  const dependencyId = generateIdFromName(dependencyIdName, id);
+  const newCachedId = addIdToCache(dependencyId, dependencyIdName);
+  return newCachedId;
 }
