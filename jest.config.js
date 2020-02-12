@@ -14,5 +14,6 @@ module.exports = {
     }
   },
   collectCoverage: true,
+  testPathIgnorePatterns: ['<rootDir>/dist/'],
   setupFiles: ['./jest.setup.js']
 };

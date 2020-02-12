@@ -12,7 +12,7 @@ describe('Inject Helper', () => {
   });
 
   describe('When is a parameter decorator', () => {
-    test('should be able to register a dependency as parameter with the same name in case insensitive Dummy -> duMMy', () => {
+    test('should be able to register a dependency as parameter with the same name', () => {
       interface IDummy {
         example(): string;
       }
@@ -30,16 +30,46 @@ describe('Inject Helper', () => {
       }
 
       class OtherDummy implements IOtherDummy {
-        constructor(@inject() private duMMy: IDummy) {}
+        constructor(@inject() private Dummy: IDummy) {}
 
         public test(): string {
-          return this.duMMy.example();
+          return this.Dummy.example();
         }
       }
 
       container.addSingleton<IOtherDummy>(OtherDummy);
-      console.log(cid);
-      // { Dummy: Symbol(Dummy), Otherdummy: Symbol(OtherDummy) }
+      const dependency = container.get<IOtherDummy>(cid.OtherDummy);
+
+      expect(dependency.test()).toBe('example');
+      resetContainer();
+    });
+
+    test('should be able to register a dependency as parameter with the same name if first char is lowercase', () => {
+      interface IDummy {
+        example(): string;
+      }
+
+      class Dummy implements IDummy {
+        public example(): string {
+          return 'example';
+        }
+      }
+
+      container.addSingleton<IDummy>(Dummy);
+
+      interface IOtherDummy {
+        test(): string;
+      }
+
+      class OtherDummy implements IOtherDummy {
+        constructor(@inject() private dummy: IDummy) {}
+
+        public test(): string {
+          return this.dummy.example();
+        }
+      }
+
+      container.addSingleton<IOtherDummy>(OtherDummy);
       const dependency = container.get<IOtherDummy>(cid.OtherDummy);
 
       expect(dependency.test()).toBe('example');

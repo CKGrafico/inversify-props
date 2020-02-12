@@ -1,13 +1,17 @@
 import { Constructor, Id, IdsCache } from './inversify.types';
 
-export const idsCache: IdsCache = {};
+export let idsCache: IdsCache = {};
+
+export function resetIdsCache() {
+  idsCache = {};
+}
 
 export function generateIdOfDependency<T>(constructor: Constructor<T>, id?: Id): Id {
   return id || Symbol(constructor.name);
 }
 
 export function generateIdName(constructorName: string) {
-  const name = constructorName.toLowerCase();
+  const name = constructorName;
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
@@ -34,10 +38,11 @@ export function generateIdAndAddToCache<T>(constructor: Constructor<T>, id?: Id)
 }
 
 export function getIdFromCache(name: string): Id {
-  // Here I have to map all the objecty keys case insensitive
-  const [, foundId] = Object.entries(idsCache).find([key, value]) => {
-    return key === name;
-  });
+  const foundId = idsCache[name];
+
+  if (!foundId) {
+    throw new Error(`Cannot find ${name} in saved ids from container`);
+  }
 
   return foundId;
 }

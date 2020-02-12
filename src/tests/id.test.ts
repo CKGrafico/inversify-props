@@ -1,4 +1,11 @@
-import { addIdToCache, generateIdName, generateIdOfDependency, idsCache } from '../lib/id.helper';
+import {
+  addIdToCache,
+  generateIdName,
+  generateIdOfDependency,
+  getIdFromCache,
+  idsCache,
+  resetIdsCache
+} from '../lib/id.helper';
 
 describe('Id Helper', () => {
   describe('When generate Ids receives a Class with an Interface and an Id', () => {
@@ -51,8 +58,9 @@ describe('Id Helper', () => {
 
       const cachedId = addIdToCache(id, name);
 
-      expect(idsCache[name]).toBe(id);
+      expect(getIdFromCache(name)).toBe(id);
       expect(cachedId).toBe(id);
+      resetIdsCache();
     });
 
     test('should not cache it id exist', () => {
@@ -66,6 +74,13 @@ describe('Id Helper', () => {
 
       expect(cachedAgainId).not.toBe(id);
       expect(cachedAgainId).toBe(fakevalue);
+      resetIdsCache();
+    });
+
+    test('should throw an error if id is not cached', () => {
+      const name = 'test';
+
+      expect(() => getIdFromCache(name)).toThrowError();
     });
   });
 
@@ -76,10 +91,10 @@ describe('Id Helper', () => {
       expect(generateIdName(Dummy.name)).toBe('Dummy');
     });
 
-    test('should return the constructor name in the same form case insensitive duMMy -> Dummy', () => {
-      class dUmmY {}
+    test('should return the constructor name in the same form if first char is lowercase', () => {
+      class dummy {}
 
-      expect(generateIdName(dUmmY.name)).toBe('Dummy');
+      expect(generateIdName(dummy.name)).toBe('Dummy');
     });
   });
 });
