@@ -76,12 +76,6 @@ describe('Id Helper', () => {
       expect(cachedAgainId).toBe(fakevalue);
       resetIdsCache();
     });
-
-    test('should throw an error if id is not cached', () => {
-      const name = 'test';
-
-      expect(() => getOrSetIdFromCache(name)).toThrowError();
-    });
   });
 
   describe('When generate name is called', () => {

@@ -82,6 +82,20 @@ export default class extends Component {
 }
 ```
 
+## This library provides a container to make your experience easier, but you can create your own container.
+
+```ts
+import 'reflect-metadata'; // Import only once
+import { Container, inject, setContainer } from 'inversify-props';
+
+setContainer(new Container());
+container.addSingleton<IService1>(Service1, 'MyService1');
+
+export default class extends Component {
+  @inject('MyService1') service1: IService1;
+}
+```
+
 > :warning: **Important!** inversify-props requires TypeScript >= 2.0 and the `experimentalDecorators`, `emitDecoratorMetadata`, `types` and `lib`
 > compilation options in your `tsconfig.json` file.
 

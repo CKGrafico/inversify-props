@@ -7,7 +7,7 @@ export function getParametersFromConstructor(constructor: Constructor): string[]
 }
 
 export function getParametersAsStringFromConstructor(constructor: Constructor): string {
-  const parameters = constructor.toString().match(/(constructor|function) (.*) ?\((.*)\)/);
+  const parameters = constructor.toString().match(/(constructor|function) ?(.*) ?\((.*)\)/);
 
   if (!parameters) {
     throw new Error(`Cannot find constructor in this class ${constructor.name}`);
