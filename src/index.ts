@@ -1,12 +1,12 @@
-import { Container } from './lib/container';
-import { DependencyId, Inject, inject, injectable, mockInject, mockRequest, mockSingleton, mockTransient, resetContainer } from './lib/helpers';
+import { setContainer } from './lib/container';
+import { idsCache } from './lib/id.helper';
 
-// How to inject a dependency
-// @Inject() nameService: INameService;
+export const container = setContainer({ skipBaseClassChecks: true });
 
-export const container: Container = new Container({skipBaseClassChecks: true});
+export const cid = idsCache;
 
-const cid = DependencyId;
-
-export { Inject, inject, injectable, Container, mockInject, mockRequest, mockSingleton, mockTransient, resetContainer, cid };
-
+export * from './lib/container';
+export * from './lib/id.helper';
+export * from './lib/inject.helper';
+export * from './lib/mocks.helper';
+export * from './lib/parameters.helper';

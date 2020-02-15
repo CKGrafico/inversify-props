@@ -1,40 +1,65 @@
-import { Container as InversifyContainer, interfaces } from 'inversify';
-import { cacheId, injectId } from './helpers';
+import { Container as InversifyContainer, decorate, interfaces } from 'inversify';
+import { generateIdAndAddToCache } from './id.helper';
+import { injectable } from './inject.helper';
+import { Constructor, Id } from './inversify.types';
 
+/**
+ * This class is the wrapper of inversify Container to add more functionalities.
+ * The library exports an instance of the class but you can create your own instance
+ */
 export class Container extends InversifyContainer {
-  public bindTo<T>(constructor: {
-    new (...args: any[]): T;
-  }, id?: string | symbol): interfaces.BindingInWhenOnSyntax<T> {
+  public bindTo<T>(constructor: Constructor<T>, customId?: Id): interfaces.BindingInWhenOnSyntax<T> {
+    const id = generateIdAndAddToCache(constructor, customId);
+    decorate(injectable(), constructor);
 
-    const dependencyId = cacheId(id, injectId(constructor));
-    return super.bind<T>(dependencyId).to(constructor);
+    return super.bind<T>(id).to(constructor);
   }
 
-  public addTransient<T>(constructor: {
-    new (...args: any[]): T;
-  }, id?: string | symbol): interfaces.BindingWhenOnSyntax<T> {
+  public addTransient<T>(constructor: Constructor<T>, customId?: Id): interfaces.BindingWhenOnSyntax<T> {
+    const id = generateIdAndAddToCache(constructor, customId);
+    decorate(injectable(), constructor);
 
-    const dependencyId = cacheId(id, injectId(constructor));
-    return super.bind<T>(dependencyId).to(constructor).inTransientScope();
+    return super
+      .bind<T>(id)
+      .to(constructor)
+      .inTransientScope();
   }
 
-  public addSingleton<T>(constructor: {
-    new (...args: any[]): T;
-  }, id?: string | symbol): interfaces.BindingWhenOnSyntax<T> {
+  public addSingleton<T>(constructor: Constructor<T>, customId?: Id): interfaces.BindingWhenOnSyntax<T> {
+    const id = generateIdAndAddToCache(constructor, customId);
+    decorate(injectable(), constructor);
 
-    const dependencyId = cacheId(id, injectId(constructor));
-    return super.bind<T>(dependencyId).to(constructor).inSingletonScope();
+    return super
+      .bind<T>(id)
+      .to(constructor)
+      .inSingletonScope();
   }
 
-  public addRequest<T>(constructor: {
-    new (...args: any[]): T;
-  }, id?: string | symbol): interfaces.BindingWhenOnSyntax<T> {
+  public addRequest<T>(constructor: Constructor<T>, customId?: Id): interfaces.BindingWhenOnSyntax<T> {
+    const id = generateIdAndAddToCache(constructor, customId);
+    decorate(injectable(), constructor);
 
-    const dependencyId = cacheId(id, injectId(constructor));
-    return super.bind<T>(dependencyId).to(constructor).inRequestScope();
+    return super
+      .bind<T>(id)
+      .to(constructor)
+      .inRequestScope();
   }
 
-  public get<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): T {
+  public get<T>(serviceIdentifier: Id): T {
     return super.get<T>(serviceIdentifier);
   }
+}
+
+let container: Container;
+
+export function getContainer(): Container {
+  return container;
+}
+
+export function setContainer(options?: interfaces.ContainerOptions): Container {
+  return (container = new Container(options));
+}
+
+export function resetContainer() {
+  getContainer().unbindAll();
 }
