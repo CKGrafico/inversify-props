@@ -1,6 +1,8 @@
-export type Constructor<T = any> = {
-  new (...args: any[]): T;
-};
+export type Constructor<T = any> =
+  | {
+      new (...args: any[]): T;
+    }
+  | any;
 
 export type Id = string | symbol;
 
