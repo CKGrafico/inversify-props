@@ -6,21 +6,21 @@ import { log } from './log.helper';
 import { cleanParameter, getParametersFromConstructor } from './parameters.helper';
 
 export function injectable() {
-  return function(constructor: Constructor) {
+  return function (constructor: Constructor) {
     return __injectable()(constructor);
   };
 }
 
 export function inject(customId?: Id, debug = false) {
-  return (target: any, methodName: string, index?: number) => {
-    log(debug, 'DI: Registering', target, index, customId);
+  return (target: any, methodName: string, indexOrDescriptor?: number | PropertyDescriptor) => {
+    log(debug, 'DI: Registering', target, indexOrDescriptor, customId);
     log(debug, 'DI: idsCache', idsCache);
 
-    if (isParameterDecorator(index)) {
-      return injectParameterDecorator(target, methodName, index, customId, debug);
+    if (typeof indexOrDescriptor === 'number' && isParameterDecorator(indexOrDescriptor)) {
+      return injectParameterDecorator(target, methodName, indexOrDescriptor, customId, debug);
     }
 
-    return injectPropertyDecorator(target, methodName, customId, debug);
+    return injectPropertyDecorator(target, methodName, indexOrDescriptor as PropertyDescriptor, customId, debug);
   };
 }
 
@@ -55,7 +55,13 @@ function injectParameterDecorator(
   return __inject(id)(target, methodName, index);
 }
 
-function injectPropertyDecorator(target: any, methodName: string, customId: Id, debug = false) {
+function injectPropertyDecorator(
+  target: any,
+  methodName: string,
+  descriptor: PropertyDescriptor,
+  customId: Id,
+  debug = false
+) {
   log(debug, 'DI: is method/property decorator', methodName, target, customId);
 
   let id = customId;
@@ -65,14 +71,21 @@ function injectPropertyDecorator(target: any, methodName: string, customId: Id, 
     id = getOrSetIdFromCache(generateIdName(cacheIdNameFromParameter));
   }
 
-  Reflect.deleteProperty(target, methodName);
-  Reflect.defineProperty(target, methodName, {
-    get() {
-      return getContainer().get(id);
-    },
-    set(value) {
-      return value;
-    }
-  });
+  if (descriptor) {
+    log(debug, 'has descriptor', descriptor);
+    descriptor.value = getContainer().get(id);
+  } else {
+    log(debug, 'Using Reflect defineProperty will be deprecated soon, use ES6');
+    Reflect.deleteProperty(target, methodName);
+    Reflect.defineProperty(target, methodName, {
+      get() {
+        return getContainer().get(id);
+      },
+      set(value) {
+        return value;
+      }
+    });
+  }
+
   return __inject(id)(target, methodName);
 }

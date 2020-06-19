@@ -10,7 +10,8 @@ module.exports = {
   testURL: 'http://localhost/',
   globals: {
     'ts-jest': {
-      tsConfig: 'src/tsconfig.json'
+      babelConfig: true,
+      tsConfig: './src/tsconfig.json'
     }
   },
   collectCoverage: true,

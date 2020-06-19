@@ -11,7 +11,8 @@ import { Inject, injectable } from '../../../../src';
 
 @Component
 export default class extends Vue {
-  @Inject() service1: IService1;
+  @Inject(null, true)
+  service1: IService1;
   @Inject() service2: IService2;
 
   public result = 'Loading services...';
