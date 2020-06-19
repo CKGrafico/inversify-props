@@ -38,5 +38,8 @@
     "reflect-metadata": "^0.1.13",
     "ts-jest": "^26.1.0",
     "typescript": "^3.9.5"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   }
 }
