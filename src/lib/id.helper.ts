@@ -30,6 +30,9 @@ export function addIdToCache(id: Id, name: string): Id {
     return existingId;
   }
 
+  // Adds also 'I' for compatibility with interfaces
+  idsCache[`I${name}`] = id;
+
   return (idsCache[name] = id);
 }
 

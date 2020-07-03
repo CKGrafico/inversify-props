@@ -73,7 +73,9 @@ function injectPropertyDecorator(
 
   if (descriptor) {
     log(debug, 'has descriptor', descriptor);
-    descriptor.value = getContainer().get(id);
+    descriptor.get = () => {
+      return getContainer().get(id);
+    };
   } else {
     log(debug, 'Using Reflect defineProperty will be deprecated soon, use ES6');
     Reflect.deleteProperty(target, methodName);
