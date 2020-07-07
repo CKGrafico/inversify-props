@@ -211,4 +211,30 @@ describe('Inject Helper', () => {
       resetContainer();
     });
   });
+
+  describe('When using classes in more than one test', () => {
+    interface IDummy {
+      example(): string;
+    }
+
+    class Dummy implements IDummy {
+      public example(): string {
+        return 'example';
+      }
+    }
+
+    test('should dont have @injectable errors', () => {
+      container.addSingleton<IDummy>(Dummy);
+      const dependency = container.get<IDummy>(cid.Dummy);
+
+      expect(dependency.example()).toBe('example');
+      resetContainer();
+
+      container.addSingleton<IDummy>(Dummy);
+      const dependency2 = container.get<IDummy>(cid.Dummy);
+
+      expect(dependency2.example()).toBe('example');
+      resetContainer();
+    });
+  });
 });
