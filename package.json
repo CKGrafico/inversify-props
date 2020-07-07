@@ -1,6 +1,6 @@
 {
   "name": "inversify-props",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "description": "Wrapper to use inversify as property decorator with TypeScript, useful for component libraries like Vue, React or LitElement",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -38,8 +38,5 @@
     "reflect-metadata": "^0.1.13",
     "ts-jest": "^26.1.0",
     "typescript": "^3.9.5"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
   }
 }
