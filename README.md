@@ -36,7 +36,7 @@ export default class extends Component {
   @inject() Service3: IService3;
 }
 ```
-> :warning: If you use a minifier or a obfuscator, you need to configure it to preserve the class and function names in the build output. See this (https://github.com/CKGrafico/inversify-props#how-to-configure-uglify-or-terser)[paragraph] for more info.
+> :warning: If you use a minifier or a obfuscator, you need to configure it to preserve the class and function names in the build output. See this [paragraph](https://github.com/CKGrafico/inversify-props#how-to-configure-uglify-or-terser) for more info.
 
 ## How to use this library outside of a component
 
