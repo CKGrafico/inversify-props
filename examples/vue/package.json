@@ -76,7 +76,7 @@
     "karma-webpack": "^4.0.2",
     "merge2": "^1.4.1",
     "mocha": "^8.4.0",
-    "nightwatch": "^1.4.0",
+    "nightwatch": "^1.7.13",
     "postcss-loader": "^3.0.0",
     "require.all": "^2.0.5",
     "sass-loader": "^8.0.2",
