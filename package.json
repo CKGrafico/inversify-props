@@ -1,13 +1,25 @@
 {
   "name": "inversify-props",
-  "version": "2.2.6",
+  "version": "3.0.0",
   "description": "Wrapper to use inversify as property decorator with TypeScript, useful for component libraries like Vue, React or LitElement",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "author": "Quique Fdez Guerra",
   "scripts": {
-    "build": "tsc -p src --outDir dist",
-    "test": "jest"
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
   },
   "license": "MIT",
   "repository": {
@@ -16,27 +28,26 @@
   },
   "keywords": [
     "inversify",
+    "inversifyjs",
     "typescript",
-    "typescript inject",
+    "dependency injection",
     "typescript di",
     "react di",
     "vue di",
     "vue inject",
     "react inject",
-    "litelement",
-    "polymer"
+    "litelement"
   ],
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
   "dependencies": {
-    "inversify": "^5.0.1"
+    "inversify": "^8.1.1"
   },
   "devDependencies": {
-    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@babel/preset-env": "^7.10.2",
-    "@types/jest": "^26.0.0",
-    "core-js": "^2.6.11",
-    "jest": "^26.0.1",
-    "reflect-metadata": "^0.1.13",
-    "ts-jest": "^26.1.0",
-    "typescript": "^3.9.5"
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.8"
   }
 }

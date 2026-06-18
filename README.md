@@ -1,218 +1,200 @@
 # Inversify Props
 
-This package is a wrapper of [Inversify](https://github.com/inversify) to simplify how inject your dependencies with property decorators in the components, made with TypeScript and compatible with Vue, React and other component libraries.
+Dependency injection for **TypeScript**, without the boilerplate. `inversify-props` wraps [InversifyJS](https://inversify.io/) so you can register a class once and inject it as a property (or constructor parameter) with a single `@inject()` — no manual ids, no fluent binding ceremony. Framework-agnostic: works with **Vue, LitElement, vanilla TS**, or anything else. Built on **inversify 8**.
 
-Do you use Hooks? You can try the experimental package [inversify-hooks](https://github.com/ckgrafico/inversify-hooks)
+Using React? Try the companion package [inversify-hooks](https://github.com/CKGrafico/inversify-hooks), a thin `useInject` layer on top of this one.
 
-![GitHub last commit](https://img.shields.io/github/last-commit/CKGrafico/inversify-props/master.svg)
+[![npm version](https://img.shields.io/npm/v/inversify-props.svg)](https://www.npmjs.com/package/inversify-props)
+[![npm downloads](https://img.shields.io/npm/dm/inversify-props.svg)](https://www.npmjs.com/package/inversify-props)
 [![GitHub license](https://img.shields.io/github/license/CKGrafico/inversify-props.svg)](https://github.com/CKGrafico/inversify-props/blob/master/LICENSE)
-[![GitHub forks](https://img.shields.io/github/forks/CKGrafico/inversify-props.svg)](https://github.com/CKGrafico/inversify-props/network)
-![GitHub contributors](https://img.shields.io/github/contributors/CKGrafico/inversify-props.svg)
+![GitHub last commit](https://img.shields.io/github/last-commit/CKGrafico/inversify-props/main.svg)
 [![GitHub issues](https://img.shields.io/github/issues/CKGrafico/inversify-props.svg)](https://github.com/CKGrafico/inversify-props/issues)
 
 ![logo](https://i.imgur.com/syVbzU6.gif)
 
+---
+
+## Table of contents
+
+- [Why](#why)
+- [Installation](#installation)
+- [TypeScript configuration](#typescript-configuration)
+- [Quick start](#quick-start)
+- [Registering dependencies](#registering-dependencies)
+- [Injecting dependencies](#injecting-dependencies)
+- [Custom ids](#custom-ids)
+- [Your own container](#your-own-container)
+- [Testing with mocks](#testing-with-mocks)
+- [API reference](#api-reference)
+- [Use it as an agent skill](#use-it-as-an-agent-skill)
+- [Troubleshooting](#troubleshooting)
+- [Credits](#credits)
+
+## Why
+
+Plain InversifyJS asks you to manage service identifiers and write fluent bindings for every dependency. `inversify-props` does that for you: it derives ids from class names automatically and lets you inject by property. You probably **don't** need it if you want the full power of inversify (custom scopes everywhere, factories, multi-injection) — it's intentionally a thin convenience layer for the common "inject my services" case.
+
 ## Installation
 
 ```bash
-$ npm install inversify-props reflect-metadata --save
+npm install inversify-props
 ```
 
-The inversify-props type definitions are included in the inversify-props npm package.
+Built on **inversify 8**, which is pulled in for you — no separate `reflect-metadata` install needed. Type definitions and both ESM and CommonJS builds ship with the package.
 
-## How to use
+> **Note:** inversify 8 is ESM-first. Bundlers (Vite, webpack, etc.) need nothing special; consuming it via `require()` from plain CommonJS Node needs Node 20.19+ or 22+.
 
-```ts
-import 'reflect-metadata'; // Import only once
-import { container, inject } from 'inversify-props';
+## TypeScript configuration
 
-container.addSingleton<IService1>(Service1);
-container.addSingleton<IService2>(Service2);
-container.addSingleton(Service3);
+inversify-props uses legacy decorators, so enable `experimentalDecorators` and keep `useDefineForClassFields` off:
 
-export default class extends Component {
-  @inject() service1: IService1;
-  @inject() _service2: IService2;
-  @inject() Service3: IService3;
+```jsonc
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "lib": ["es2020", "dom"],
+    "moduleResolution": "bundler",
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false
+  }
 }
 ```
-> :warning: If you use a minifier or a obfuscator, you need to configure it to preserve the class and function names in the build output. See this [paragraph](https://github.com/CKGrafico/inversify-props#how-to-configure-uglify-or-terser) for more info.
 
-## How to use this library outside of a component
+> ⚠️ If `useDefineForClassFields` is `true`, an injected property's class field shadows the injected getter and reads back `undefined`. It defaults to `false` when `target` is below `ES2022`.
+
+## Quick start
 
 ```ts
-import 'reflect-metadata'; // Import only once
 import { cid, container, inject } from 'inversify-props';
 
-container.addSingleton<IService1>(Service1, 'MyService1');
-
-// You can inject in other services as a Prop
-export class MyOtherService {
-  @inject() private service1: IService1;
+// 1. Define a class + interface
+interface IService1 {
+  method1(): string;
+}
+class Service1 implements IService1 {
+  method1() {
+    return 'method 1';
+  }
 }
 
-// Also in the constructor as a param
-export class MyOtherService {
-  constructor(@inject() private exampleService: IExampleService) {}
+// 2. Register it (usually in app.container.ts), before anything resolves
+container.addSingleton<IService1>(Service1);
+
+// 3. Inject it anywhere
+class MyComponent {
+  @inject() service1!: IService1;
 }
 
-// Or in any function as a variable
-export function myHelper() {
-  const service1 = container.get<IService1>(cid.IService1);
-}
+// ...or resolve it directly
+const service1 = container.get<IService1>(cid.IService1);
+```
 
-// camelCase, PascalCase and _ are allowed
+> :warning: If you use a minifier/obfuscator, configure it to preserve class and function names — see [Troubleshooting](#troubleshooting).
+
+## Registering dependencies
+
+Register on the shared `container` before resolving. Three lifetimes are available:
+
+```ts
+container.addSingleton<IService1>(Service1); // one shared instance (most common)
+container.addTransient<ILogger>(Logger);     // a new instance on every resolve
+container.addRequest<IUnitOfWork>(UnitOfWork); // one instance per request scope
+```
+
+The generic (`<IService1>`) is just the compile-time type. The **runtime id is derived from the class name** and cached under both `Service1` and `IService1`, which is why `cid.IService1` works.
+
+## Injecting dependencies
+
+Inject as a property — the id is inferred from the **property name** (camelCase, PascalCase and leading `_` are all handled):
+
+```ts
 export class MyOtherService {
   @inject() private service1: IService1;
   @inject() private _service1: IService1;
   @inject() private Service1: IService1;
-  @inject() private _Service1: IService1;
 }
 ```
 
-## You can also use any ID that you prefer if you don't want to use auto generated ids
+Constructor injection infers the id from the **parameter name**:
 
 ```ts
-import 'reflect-metadata'; // Import only once
-import { container, inject } from 'inversify-props';
+export class MyOtherService {
+  constructor(@inject() private exampleService: IExampleService) {}
+}
+```
 
+## Custom ids
+
+Don't want auto-generated ids? Pass your own:
+
+```ts
 container.addSingleton<IService1>(Service1, 'MyService1');
 
-export default class extends Component {
-  @inject('MyService1') service1: IService1;
+export class MyComponent {
+  @inject('MyService1') service1!: IService1;
 }
 ```
 
-## This library provides a container to make your experience easier, but you can create your own container.
+## Your own container
+
+The library ships a ready-to-use `container`, but you can create and install your own:
 
 ```ts
-import 'reflect-metadata'; // Import only once
-import { Container, inject, setContainer } from 'inversify-props';
+import { Container, setContainer } from 'inversify-props';
 
 setContainer(new Container());
-container.addSingleton<IService1>(Service1, 'MyService1');
-
-export default class extends Component {
-  @inject('MyService1') service1: IService1;
-}
 ```
 
-> :warning: **Important!** inversify-props requires TypeScript >= 2.0 and the `experimentalDecorators`, `emitDecoratorMetadata`, `types` and `lib`
-> compilation options in your `tsconfig.json` file.
+## Testing with mocks
 
-```json
-{
-  "compilerOptions": {
-    "target": "es5",
-    "lib": ["es6"],
-    "types": ["reflect-metadata"],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
-  }
-}
-```
-
-## Why we made this package
-
-The idea is to add a simple wrapper that helps us to inject dependencies in components using `property decorators`, we have also extend a little `inversify` adding some methods that make our experience injecting dependencies easier.
-
-**You probably don't need this if:**
-
-- You have experience using inversify and you don't need to simplify the process.
-- You want to use all the power of inversify, we are only injecting dependencies like services, helpers, utils...
-- You don't want to inject your dependencies as properties.
-
-## How to register a dependency
-
-Inversify needs an id to register our dependencies, this wrapper is going to do this for you 'magically' but if you want to uglify the code, keep reading the docs 🤓.
-
-First of all create a class and an interface with the public methods of your class.
+The recommended pattern, before each test: reset the container, re-register dependencies, then mock what the test needs.
 
 ```ts
-// iservice1.ts
-export interface IService1 {
-  method1(): string;
-}
+import { cid, mockSingleton, resetContainer } from 'inversify-props';
 
-// service.ts
-export class Service1 implements IService1 {
-  method1(): string {
-    return 'method 1';
-  }
-}
-```
-
-Now is time to register the service in the container, we usually do that in `app.container.ts` or `app.ts`.
-
-```ts
-container.addSingleton<IService1>(Service1);
-```
-
-## How to test
-
-There are some helper functions to test, the recommended way to test is beforeEach test:
-
-1. Reset the Container
-2. Register again all the dependencies of the container (this is your job)
-3. Mock all the necessary dependencies for the test
-
-```ts
 beforeEach(() => {
   resetContainer();
-  containerBuilder();
+  containerBuilder(); // your registrations
   mockSingleton<IHttpService>(cid.IHttpService, HttpServiceMock);
 });
 ```
 
-## Other ways to register a class
+`mockTransient` and `mockRequest` have the same signature. `resetContainer()` unbinds everything.
 
-As [inversify accepts](https://github.com/inversify/InversifyJS/blob/master/wiki/scope.md), we have configured three types of registration.
+## API reference
 
-- Singleton: The dependency will be created only once, one dependency - one object.
-- Transient: The dependency will be created each time is injected, one dependency - one object per injection.
-- Request: Special case of singleton, more info in [official docs](https://github.com/inversify/InversifyJS/blob/master/wiki/scope.md#about-inrequestscope).
+| Export | Description |
+| --- | --- |
+| `container` | The shared container instance (auto-created). |
+| `container.addSingleton<T>(Class, id?)` | Register a single shared instance. |
+| `container.addTransient<T>(Class, id?)` | Register a new instance per resolve. |
+| `container.addRequest<T>(Class, id?)` | Register one instance per request scope. |
+| `container.get<T>(id)` | Resolve a dependency by id. |
+| `cid` | Cache of generated ids, e.g. `cid.IService1`. |
+| `inject` / `Inject` | Property/parameter decorator for injecting dependencies. |
+| `injectable` | Class decorator marking a class as injectable. |
+| `mockSingleton` / `mockTransient` / `mockRequest` | Replace a registered id with another implementation (testing). |
+| `resetContainer()` | Unbind everything from the container. |
+| `getContainer()` / `setContainer(opts)` | Access or replace the underlying InversifyJS container. |
+| `Container` | The container class, if you want your own instance. |
 
-## How to use in your components
+## Use it as an agent skill
 
-Once your dependencies are registered in the container, is simple as create a property with the name and the interface.
+This repo ships an [Agent Skill](skills/inversify-props/SKILL.md) so AI coding agents (Claude Code, Cursor, etc.) know how to wire up DI with this library. Install it with [`npx skills`](https://skills.sh):
 
-```ts
-export default class extends Component {
-  @inject() service1: IService1;
-}
+```bash
+npx skills add CKGrafico/inversify-props
 ```
 
-> Note: Part of the magic is that the name of the property has to be the name of the interface, this is how we don't need to add the `id`.
+## Troubleshooting
 
-## Some examples
+| Symptom | Cause & fix |
+| --- | --- |
+| Injected property is `undefined` | `useDefineForClassFields` is `true`. Set it to `false` (or keep `target` below `ES2022`). |
+| Works in dev, breaks in production | The minifier mangled class names, so `cid.IXxx` is `undefined`. Enable `keepNames` (esbuild/Vite) or `keep_classnames` + `keep_fnames` (Terser/Uglify). Vue CLI uses Terser under the hood — set it via `configureWebpack` → `optimization.minimizer`. |
+| `No matching bindings found` | The service wasn't registered, or registration ran after it was resolved. Register first. |
+| Decorators throw at runtime | `experimentalDecorators` is off in your `tsconfig.json`. |
 
-- [Basic example with Vue](https://github.com/CKGrafico/inversify-props/tree/master/examples/vue)
-- [Basic example with LitElement](https://github.com/CKGrafico/inversify-props/tree/master/examples/lit-element)
-- [Used in my Boilerplates](https://boilerplates.js.org)
+## Credits
 
-## How to configure Uglify or Terser
-
-If you want to use Uglify or Terser to obfuscate the code, you will need to add this options to preserve the names of the classes (we need them to generate the ids `magically` 😉).
-
-```ts
-new UglifyJSPlugin({
-  uglifyOptions: {
-    keep_classnames: true,
-    keep_fnames: true
-  }
-});
-```
-
-```ts
-new TerserPlugin({
-  terserOptions: {
-    keep_classnames: true,
-    keep_fnames: true
-  }
-});
-```
-
->Note: **Vue-cli** uses TerserPlugin under the hood.   
-You can configure the Terser plugin inside your *vue.config.js* file in `configureWebpack` node via the `optimization.minimizer` property.
+Built on [InversifyJS](https://inversify.io/). Licensed under [MIT](LICENSE).

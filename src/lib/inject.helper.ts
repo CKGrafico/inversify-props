@@ -12,7 +12,7 @@ export function injectable() {
 }
 
 export function inject(customId?: Id, debug = false) {
-  return (target: any, methodName: string, indexOrDescriptor?: number | PropertyDescriptor) => {
+  return (target: any, methodName: string | symbol | undefined, indexOrDescriptor?: number | PropertyDescriptor) => {
     log(debug, 'DI: Registering', target, indexOrDescriptor, customId);
     log(debug, 'DI: idsCache', idsCache);
 
@@ -20,7 +20,13 @@ export function inject(customId?: Id, debug = false) {
       return injectParameterDecorator(target, methodName, indexOrDescriptor, customId, debug);
     }
 
-    return injectPropertyDecorator(target, methodName, indexOrDescriptor as PropertyDescriptor, customId, debug);
+    injectPropertyDecorator(
+      target,
+      methodName as string | symbol,
+      indexOrDescriptor as PropertyDescriptor | undefined,
+      customId,
+      debug
+    );
   };
 }
 
@@ -32,9 +38,9 @@ export function isParameterDecorator(index: number): boolean {
 
 function injectParameterDecorator(
   target: Constructor,
-  methodName: string,
+  methodName: string | symbol | undefined,
   index: number,
-  customId: Id,
+  customId?: Id,
   debug = false
 ): void {
   log(debug, 'DI: is parameter decorator', target, index, customId);
@@ -52,40 +58,43 @@ function injectParameterDecorator(
     log(debug, id);
   }
 
-  return __inject(id)(target, methodName, index);
+  __inject(id)(target, methodName, index);
 }
 
 function injectPropertyDecorator(
   target: any,
-  methodName: string,
-  descriptor: PropertyDescriptor,
-  customId: Id,
+  methodName: string | symbol,
+  descriptor: PropertyDescriptor | undefined,
+  customId?: Id,
   debug = false
-) {
+): void {
   log(debug, 'DI: is method/property decorator', methodName, target, customId);
 
   let id = customId;
 
   if (!id) {
-    const cacheIdNameFromParameter = cleanParameter(methodName);
-    id = getOrSetIdFromCache(generateIdName(cacheIdNameFromParameter));
+    id = getOrSetIdFromCache(generateIdName(cleanParameter(String(methodName))));
   }
 
+  const resolvedId = id;
+
+  // Resolve lazily from the current container on access. This keeps injection
+  // working even after the container is reconfigured (e.g. mocked in tests),
+  // and does not require inversify metadata for the property.
   if (descriptor) {
-    log(debug, 'has descriptor', descriptor);
-    descriptor.get = () => getContainer().get(id);
-  } else {
-    log(debug, 'Using Reflect defineProperty will be deprecated soon, use ES6');
-    Reflect.deleteProperty(target, methodName);
-    Reflect.defineProperty(target, methodName, {
-      get() {
-        return getContainer().get(id);
-      },
-      set(value) {
-        return value;
-      }
-    });
+    descriptor.get = () => getContainer().get(resolvedId);
+    return;
   }
 
-  return __inject(id)(target, methodName);
+  Reflect.deleteProperty(target, methodName);
+  Reflect.defineProperty(target, methodName, {
+    configurable: true,
+    enumerable: true,
+    get() {
+      return getContainer().get(resolvedId);
+    },
+    set() {
+      // Ignore writes — the value always comes from the container.
+    }
+  });
 }
