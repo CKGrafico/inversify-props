@@ -26,6 +26,11 @@
     "type": "git",
     "url": "git+https://github.com/CKGrafico/inversify-props.git"
   },
+  "homepage": "https://github.com/CKGrafico/inversify-props#readme",
+  "bugs": "https://github.com/CKGrafico/inversify-props/issues",
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "keywords": [
     "inversify",
     "inversifyjs",

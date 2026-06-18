@@ -26,6 +26,7 @@ Using React? Try the companion package [inversify-hooks](https://github.com/CKGr
 - [Your own container](#your-own-container)
 - [Testing with mocks](#testing-with-mocks)
 - [API reference](#api-reference)
+- [Runnable examples](#runnable-examples)
 - [Use it as an agent skill](#use-it-as-an-agent-skill)
 - [Troubleshooting](#troubleshooting)
 - [Credits](#credits)
@@ -177,6 +178,22 @@ beforeEach(() => {
 | `resetContainer()` | Unbind everything from the container. |
 | `getContainer()` / `setContainer(opts)` | Access or replace the underlying InversifyJS container. |
 | `Container` | The container class, if you want your own instance. |
+
+## Runnable examples
+
+Two minimal demos live in [`examples/`](examples), each showing a service that injects another service via `@inject()`:
+
+- [`examples/vue`](examples/vue) — Vue 3 + Vite
+- [`examples/lit`](examples/lit) — Lit 3 + Vite
+
+```bash
+# from the repo root — build the library first
+npm install && npm run build
+
+cd examples/vue   # or examples/lit
+npm install
+npm run dev
+```
 
 ## Use it as an agent skill
 

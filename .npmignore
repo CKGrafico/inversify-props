@@ -1,7 +1,8 @@
 node_modules/
 .vscode/
+.claude/
 .github/
 examples/
-test/
-jest.config.js
+skills/
+src/
 coverage/

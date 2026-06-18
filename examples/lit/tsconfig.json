@@ -10,8 +10,7 @@
     "strictNullChecks": false,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "preserve"
+    "noEmit": true
   },
   "include": ["src", "vite.config.ts"]
 }
