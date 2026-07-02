@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>inversify-props — Dependency injection without the boilerplate</title>
+  <meta name="description" content="A lightweight wrapper over InversifyJS 8: register a class once, inject it as a property with a single decorator. Works with Vue, Lit, and vanilla TypeScript." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%238b5cf6'/%3E%3Ctext x='32' y='44' font-family='monospace' font-size='34' font-weight='bold' text-anchor='middle' fill='white'%3E@%3C/text%3E%3C/svg%3E" />
+  <meta property="og:title" content="inversify-props — Dependency injection without the boilerplate" />
+  <meta property="og:description" content="Register a class once, inject it as a property with a single decorator. InversifyJS 8 under the hood." />
+  <meta property="og:url" content="https://inversify-props.ckgrafico.com" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="theme-props">
+
+  <!-- ======================== NAV ======================== -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="nav-brand" href="#top">
+        <span class="brand-mark" aria-hidden="true">@</span>
+        <span>inversify-props</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#quick-start">Quick start</a>
+        <a href="#lifetimes">Lifetimes</a>
+        <a href="#api">API</a>
+        <a href="https://inversify-hooks.ckgrafico.com" class="nav-sibling">inversify-hooks ↗</a>
+        <a href="https://github.com/CKGrafico/inversify-props" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.npmjs.com/package/inversify-props" target="_blank" rel="noopener">npm</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ======================== HERO ======================== -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-mark" aria-hidden="true">@inject()</div>
+        <h1>Dependency injection<br /><span class="accent">without the boilerplate</span></h1>
+        <p class="hero-sub">
+          A lightweight wrapper over <a href="https://inversify.io" target="_blank" rel="noopener">InversifyJS 8</a>.
+          Register a class once, inject it as a property with a single decorator — IDs are derived from your
+          class names automatically. No manual symbols, no binding ceremony.
+        </p>
+
+        <div class="install-box" role="group" aria-label="Install command">
+          <span class="install-prompt">$</span>
+          <code>npm install inversify-props</code>
+          <button class="copy-btn" data-copy="npm install inversify-props" aria-label="Copy install command">
+            <svg class="icon-copy" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg>
+            <svg class="icon-check" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/></svg>
+          </button>
+        </div>
+
+        <div class="hero-badges">
+          <a href="https://www.npmjs.com/package/inversify-props" target="_blank" rel="noopener"><img src="https://img.shields.io/npm/v/inversify-props?style=flat-square&color=8b5cf6&labelColor=161b22" alt="npm version" /></a>
+          <a href="https://www.npmjs.com/package/inversify-props" target="_blank" rel="noopener"><img src="https://img.shields.io/npm/dm/inversify-props?style=flat-square&color=8b5cf6&labelColor=161b22" alt="npm downloads" /></a>
+          <a href="https://github.com/CKGrafico/inversify-props/blob/main/LICENSE" target="_blank" rel="noopener"><img src="https://img.shields.io/npm/l/inversify-props?style=flat-square&color=8b5cf6&labelColor=161b22" alt="license" /></a>
+        </div>
+
+        <p class="hero-platforms">Vue &middot; Lit &middot; vanilla TypeScript — framework-agnostic by design</p>
+      </div>
+    </section>
+
+    <!-- ======================== QUICK START ======================== -->
+    <section class="section" id="quick-start">
+      <div class="container">
+        <h2 class="reveal">Three steps, zero ceremony</h2>
+        <p class="section-sub reveal">Define, register, inject. IDs are inferred from class and property names.</p>
+
+        <div class="code-window reveal">
+          <div class="code-bar">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="code-title">services.ts</span>
+          </div>
+          <pre class="code-body"><code><span class="c">// 1. Define a class + interface</span>
+<span class="k">interface</span> <span class="t">IService1</span> {
+  <span class="f">method1</span>(): <span class="t">string</span>;
+}
+
+<span class="k">class</span> <span class="t">Service1</span> <span class="k">implements</span> <span class="t">IService1</span> {
+  <span class="f">method1</span>() {
+    <span class="k">return</span> <span class="s">'method 1'</span>;
+  }
+}</code></pre>
+        </div>
+
+        <div class="code-window reveal">
+          <div class="code-bar">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="code-title">main.ts</span>
+          </div>
+          <pre class="code-body"><code><span class="k">import</span> { container } <span class="k">from</span> <span class="s">'inversify-props'</span>;
+
+<span class="c">// 2. Register it once</span>
+container.<span class="f">addSingleton</span>&lt;<span class="t">IService1</span>&gt;(<span class="t">Service1</span>);</code></pre>
+        </div>
+
+        <div class="code-window reveal">
+          <div class="code-bar">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="code-title">component.ts</span>
+          </div>
+          <pre class="code-body"><code><span class="k">import</span> { cid, container, inject } <span class="k">from</span> <span class="s">'inversify-props'</span>;
+
+<span class="c">// 3. Inject it anywhere — the ID comes from the property name</span>
+<span class="k">class</span> <span class="t">MyComponent</span> {
+  <span class="d">@inject</span>() service1!: <span class="t">IService1</span>;
+}
+
+<span class="c">// ...or resolve directly</span>
+<span class="k">const</span> service1 = container.<span class="f">get</span>&lt;<span class="t">IService1</span>&gt;(cid.<span class="t">IService1</span>);</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== BEFORE / AFTER ======================== -->
+    <section class="section" id="why">
+      <div class="container">
+        <h2 class="reveal">Why not plain InversifyJS?</h2>
+        <p class="section-sub reveal">Plain InversifyJS makes you manage service identifiers and write fluent bindings by hand. inversify-props derives everything from names.</p>
+        <div class="compare-grid reveal">
+          <div class="code-window bad">
+            <div class="code-bar">
+              <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              <span class="code-title">plain inversify</span>
+            </div>
+            <pre class="code-body"><code><span class="k">const</span> TYPES = {
+  Service1: <span class="f">Symbol.for</span>(<span class="s">'Service1'</span>),
+};
+
+container
+  .<span class="f">bind</span>&lt;<span class="t">IService1</span>&gt;(TYPES.Service1)
+  .<span class="f">to</span>(<span class="t">Service1</span>)
+  .<span class="f">inSingletonScope</span>();
+
+<span class="k">class</span> <span class="t">MyComponent</span> {
+  <span class="d">@inject</span>(TYPES.Service1)
+  <span class="k">private</span> service1: <span class="t">IService1</span>;
+}</code></pre>
+          </div>
+          <div class="code-window good">
+            <div class="code-bar">
+              <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              <span class="code-title">inversify-props</span>
+            </div>
+            <pre class="code-body"><code>container.<span class="f">addSingleton</span>&lt;<span class="t">IService1</span>&gt;(<span class="t">Service1</span>);
+
+<span class="k">class</span> <span class="t">MyComponent</span> {
+  <span class="d">@inject</span>() service1!: <span class="t">IService1</span>;
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== LIFETIMES ======================== -->
+    <section class="section" id="lifetimes">
+      <div class="container">
+        <h2 class="reveal">Three lifetimes</h2>
+        <div class="cards-grid three reveal">
+          <div class="card">
+            <h3>addSingleton</h3>
+            <p>One shared instance for the whole app. The most common choice for services.</p>
+          </div>
+          <div class="card">
+            <h3>addTransient</h3>
+            <p>A fresh instance every time the dependency is resolved.</p>
+          </div>
+          <div class="card">
+            <h3>addRequest</h3>
+            <p>One instance per request scope — shared within a single resolution tree.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== API ======================== -->
+    <section class="section" id="api">
+      <div class="container">
+        <h2 class="reveal">Core API</h2>
+        <div class="api-table reveal">
+          <div class="api-row"><code>container</code><p>The shared container instance.</p></div>
+          <div class="api-row"><code>container.addSingleton&lt;T&gt;(Class, id?)</code><p>Register a class with singleton lifetime.</p></div>
+          <div class="api-row"><code>container.addTransient&lt;T&gt;(Class, id?)</code><p>New instance per resolve.</p></div>
+          <div class="api-row"><code>container.addRequest&lt;T&gt;(Class, id?)</code><p>One instance per request scope.</p></div>
+          <div class="api-row"><code>@inject() / @Inject()</code><p>Property or constructor-parameter decorator. IDs inferred from names — camelCase, PascalCase, and leading <code>_</code> all handled.</p></div>
+          <div class="api-row"><code>cid</code><p>Generated cache of IDs, e.g. <code>cid.IService1</code>.</p></div>
+          <div class="api-row"><code>mockSingleton / mockTransient / mockRequest</code><p>Swap real implementations for mocks in tests.</p></div>
+          <div class="api-row"><code>resetContainer()</code><p>Clear all bindings — clean state between tests.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== TSCONFIG ======================== -->
+    <section class="section" id="tsconfig">
+      <div class="container">
+        <h2 class="reveal">TypeScript setup</h2>
+        <p class="section-sub reveal">Decorators need a couple of compiler options. No separate <code>reflect-metadata</code> install required — ESM and CommonJS builds ship in the box.</p>
+        <div class="code-window reveal">
+          <div class="code-bar">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="code-title">tsconfig.json</span>
+          </div>
+          <pre class="code-body"><code>{
+  <span class="s">"compilerOptions"</span>: {
+    <span class="s">"target"</span>: <span class="s">"es2020"</span>,
+    <span class="s">"lib"</span>: [<span class="s">"es2020"</span>, <span class="s">"dom"</span>],
+    <span class="s">"moduleResolution"</span>: <span class="s">"bundler"</span>,
+    <span class="s">"experimentalDecorators"</span>: <span class="k">true</span>,
+    <span class="s">"useDefineForClassFields"</span>: <span class="k">false</span>
+  }
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== SIBLING ======================== -->
+    <section class="section">
+      <div class="container narrow reveal">
+        <a class="sibling-card" href="https://inversify-hooks.ckgrafico.com">
+          <div>
+            <h3>Using React? → inversify-hooks</h3>
+            <p>The React companion built on top of inversify-props: resolve any service with a single <code>useInject()</code> hook. No providers, no context boilerplate.</p>
+          </div>
+          <span class="sibling-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ======================== CTA ======================== -->
+    <section class="section cta-section" id="get-started">
+      <div class="container narrow center reveal">
+        <h2>Get started</h2>
+        <div class="install-box big" role="group" aria-label="Install command">
+          <span class="install-prompt">$</span>
+          <code>npm install inversify-props</code>
+          <button class="copy-btn" data-copy="npm install inversify-props" aria-label="Copy install command">
+            <svg class="icon-copy" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg>
+            <svg class="icon-check" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/></svg>
+          </button>
+        </div>
+        <p class="cta-note">Requires Node.js 20.19+ &middot; TypeScript with decorators &middot; MIT licensed</p>
+        <div class="cta-links">
+          <a class="btn primary" href="https://github.com/CKGrafico/inversify-props" target="_blank" rel="noopener">Star on GitHub</a>
+          <a class="btn" href="https://github.com/CKGrafico/inversify-props#readme" target="_blank" rel="noopener">Read the full docs</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================== FOOTER ======================== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark small" aria-hidden="true">@</span>
+        <span>inversify-props</span>
+      </div>
+      <p>MIT © <a href="https://github.com/ckgrafico" target="_blank" rel="noopener">ckgrafico</a></p>
+      <div class="footer-links">
+        <a href="https://github.com/CKGrafico/inversify-props" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.npmjs.com/package/inversify-props" target="_blank" rel="noopener">npm</a>
+        <a href="https://inversify-hooks.ckgrafico.com">inversify-hooks</a>
+        <a href="https://inversify.io" target="_blank" rel="noopener">InversifyJS</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

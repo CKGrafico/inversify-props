@@ -4,6 +4,8 @@ Dependency injection for **TypeScript**, without the boilerplate. `inversify-pro
 
 Using React? Try the companion package [inversify-hooks](https://github.com/CKGrafico/inversify-hooks), a thin `useInject` layer on top of this one.
 
+**[inversify-props.ckgrafico.com](https://inversify-props.ckgrafico.com)**
+
 [![npm version](https://img.shields.io/npm/v/inversify-props.svg)](https://www.npmjs.com/package/inversify-props)
 [![npm downloads](https://img.shields.io/npm/dm/inversify-props.svg)](https://www.npmjs.com/package/inversify-props)
 [![GitHub license](https://img.shields.io/github/license/CKGrafico/inversify-props.svg)](https://github.com/CKGrafico/inversify-props/blob/main/LICENSE)
